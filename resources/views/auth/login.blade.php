@@ -16,7 +16,7 @@
                 autofocus
                 autocomplete="username"
                 placeholder="usuario@grs.com"
-                class="w-full rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-grs-verde @error('email') border-red-400 @enderror"
+                class="w-full rounded-xl px-4 py-3 text-sm text-gray-800 bg-white/95 border-0 focus:outline-none focus:ring-2 focus:ring-grs-verde @error('email') ring-2 ring-red-400 @enderror"
             />
             @error('email')
                 <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
@@ -34,7 +34,7 @@
                     required
                     autocomplete="current-password"
                     placeholder="••••••••"
-                    class="w-full rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-grs-verde pr-10 @error('password') border-red-400 @enderror"
+                    class="w-full rounded-xl px-4 py-3 text-sm text-gray-800 bg-white/95 border-0 focus:outline-none focus:ring-2 focus:ring-grs-verde pr-10 @error('password') ring-2 ring-red-400 @enderror"
                 />
                 {{-- Toggle mostrar contraseña --}}
                 <button type="button"
@@ -69,7 +69,7 @@
         </div>
 
         {{-- Botón --}}
-        <button type="submit" class="w-full py-3 text-base font-bold rounded-lg transition-all mt-2"
+        <button type="submit" class="w-full py-3 text-base font-bold rounded-xl transition-all mt-2"
                 style="background:#6DBE6D; color:#0D1F17;">
             Iniciar sesión
         </button>

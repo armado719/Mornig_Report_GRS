@@ -66,14 +66,14 @@
         </div>
 
         {{-- Card de login — lado derecho --}}
-        <div class="relative z-10 w-full max-w-sm mx-auto lg:mx-0 px-5 py-8 lg:mr-16 xl:mr-24 flex-shrink-0">
-            <div class="shadow-2xl overflow-hidden"
-                 style="border-radius:2rem; background:rgba(10,24,15,0.85); backdrop-filter:blur(20px); border:1px solid rgba(109,190,109,0.25);">
+        <div class="relative z-10 w-full max-w-xs mx-4 sm:mx-auto lg:mx-0 lg:mr-16 xl:mr-24 flex-shrink-0">
+            <div class="shadow-2xl"
+                 style="border-radius:2rem; background:rgba(10,24,15,0.88); backdrop-filter:blur(20px); border:1px solid rgba(109,190,109,0.25);">
 
                 {{-- Franja verde superior --}}
-                <div class="w-full" style="height:3px; background:linear-gradient(90deg,#2D7A4F,#6DBE6D,#2D7A4F);"></div>
+                <div style="height:3px; background:linear-gradient(90deg,#2D7A4F,#6DBE6D,#2D7A4F); border-radius:2rem 2rem 0 0;"></div>
 
-                <div class="px-10 py-10">
+                <div class="px-7 py-8">
                     {{-- Logo y nombre --}}
                     <div class="flex flex-col items-center mb-8">
                         @if(file_exists(public_path('images/grs-logo.png')))
