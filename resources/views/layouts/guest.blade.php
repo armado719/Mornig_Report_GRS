@@ -18,6 +18,13 @@
     <div class="min-h-screen flex items-center justify-start relative overflow-hidden"
          style="background: linear-gradient(135deg, #061209 0%, #0D1F17 50%, #0a1a10 100%);">
 
+        {{-- Imagen de fondo --}}
+        @if(file_exists(public_path('images/bg-login.jpg')))
+        <div class="absolute inset-0 bg-cover bg-center"
+             style="background-image:url('/images/bg-login.jpg');"></div>
+        <div class="absolute inset-0" style="background:rgba(6,18,9,0.72);"></div>
+        @endif
+
         {{-- Patrón de fondo decorativo --}}
         <div class="absolute inset-0 opacity-10" style="pointer-events:none;">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
