@@ -100,6 +100,49 @@ class WizardReporte extends Component
     // ── Paso 4 — Equipos en reparación (dinámico) ─────────────────────
     public array $equipos = [];
 
+    // ── Paso 5 — Parámetros de perforación DIA ────────────────────────
+    public ?string $par_dia_peso_sub      = null;
+    public ?string $par_dia_peso_baj      = null;
+    public ?string $par_dia_peso_rot      = null;
+    public ?string $par_dia_presion_bomba = null;
+    public ?string $par_dia_rpm           = null;
+    public ?string $par_dia_torque        = null;
+    public ?string $par_dia_wob           = null;
+    public ?string $par_dia_spm           = null;
+    public ?string $par_dia_gpm           = null;
+    public ?string $par_dia_rop           = null;
+
+    // ── Paso 5 — Parámetros de perforación NOCHE ──────────────────────
+    public ?string $par_noche_peso_sub      = null;
+    public ?string $par_noche_peso_baj      = null;
+    public ?string $par_noche_peso_rot      = null;
+    public ?string $par_noche_presion_bomba = null;
+    public ?string $par_noche_rpm           = null;
+    public ?string $par_noche_torque        = null;
+    public ?string $par_noche_wob           = null;
+    public ?string $par_noche_spm           = null;
+    public ?string $par_noche_gpm           = null;
+    public ?string $par_noche_rop           = null;
+
+    // ── Paso 5 — Horas rotación por tubería ───────────────────────────
+    public ?string $hr_5dp   = null;
+    public ?string $hr_5hwdp = null;
+    public ?string $hr_6dc   = null;
+    public ?string $hr_8dc   = null;
+    public ?string $hr_jar   = null;
+    public ?string $hr_monel = null;
+    public ?string $hr_otro  = null;
+
+    // ── Paso 5 — Personal en locación ─────────────────────────────────
+    public int $personal_grs       = 0;
+    public int $personal_ecopetrol = 0;
+    public int $personal_flotantes = 0;
+
+    // ── Paso 5 — Comentarios finales ──────────────────────────────────
+    public string $com_faltantes = '';
+    public string $com_npt       = '';
+    public string $com_general   = '';
+
     // ── Catálogos ─────────────────────────────────────────────────────
     public array $rigs = [];
     public array $pozos = [];
@@ -256,6 +299,18 @@ class WizardReporte extends Component
         }
     }
 
+    public function completarReporte(): void
+    {
+        $this->guardarBorrador();
+
+        MorningReport::where('id', $this->reporteId)->update(['estado' => 'COMPLETADO']);
+
+        session()->flash('flash.banner', 'Reporte completado y guardado exitosamente.');
+        session()->flash('flash.bannerStyle', 'success');
+
+        $this->redirect(route('reportes.ver', $this->reporteId), navigate: true);
+    }
+
     // ── Acciones paso 2 ───────────────────────────────────────────────
 
     public function addOperacion(): void
@@ -348,6 +403,9 @@ class WizardReporte extends Component
                 'horas_acum_rotacion'            => $this->horas_acum_rotacion ?: null,
                 'prueba_preventoras_fecha'       => $this->prueba_preventoras_fecha ?: null,
                 'prueba_preventoras_comentarios' => $this->prueba_preventoras_comentarios ?: null,
+                'personal_grs'                   => $this->personal_grs,
+                'personal_ecopetrol'             => $this->personal_ecopetrol,
+                'personal_flotantes'             => $this->personal_flotantes,
                 'creado_por'                     => Auth::id(),
                 'estado'                         => 'BORRADOR',
             ];
@@ -371,6 +429,50 @@ class WizardReporte extends Component
                     'dias_sin_rwc' => $this->p_dias_sin_rwc,
                 ]
             );
+
+            // Paso 5 — Parámetros perforación, horas tubería, comentarios
+            if ($this->paso >= 5) {
+                $turnosParams = [
+                    'DIA'   => ['peso_sub' => $this->par_dia_peso_sub,   'peso_baj' => $this->par_dia_peso_baj,
+                                'peso_rot' => $this->par_dia_peso_rot,   'presion_bomba_psi' => $this->par_dia_presion_bomba,
+                                'rpm'      => $this->par_dia_rpm,        'torque' => $this->par_dia_torque,
+                                'wob'      => $this->par_dia_wob,        'spm'    => $this->par_dia_spm,
+                                'gpm'      => $this->par_dia_gpm,        'rop'    => $this->par_dia_rop],
+                    'NOCHE' => ['peso_sub' => $this->par_noche_peso_sub, 'peso_baj' => $this->par_noche_peso_baj,
+                                'peso_rot' => $this->par_noche_peso_rot, 'presion_bomba_psi' => $this->par_noche_presion_bomba,
+                                'rpm'      => $this->par_noche_rpm,      'torque' => $this->par_noche_torque,
+                                'wob'      => $this->par_noche_wob,      'spm'    => $this->par_noche_spm,
+                                'gpm'      => $this->par_noche_gpm,      'rop'    => $this->par_noche_rop],
+                ];
+
+                foreach ($turnosParams as $turno => $vals) {
+                    \App\Models\ParametrosPerforacion::updateOrCreate(
+                        ['reporte_id' => $this->reporteId, 'turno' => $turno],
+                        array_map(fn($v) => $v ?: null, $vals)
+                    );
+                }
+
+                \App\Models\ComentarioReporte::updateOrCreate(
+                    ['reporte_id' => $this->reporteId, 'tipo' => 'HORAS_ROTACION'],
+                    [
+                        'contenido'  => null,
+                        'hrs_5dp'    => $this->hr_5dp    ?: null,
+                        'hrs_5hwdp'  => $this->hr_5hwdp  ?: null,
+                        'hrs_6dc'    => $this->hr_6dc    ?: null,
+                        'hrs_8dc'    => $this->hr_8dc    ?: null,
+                        'hrs_jar'    => $this->hr_jar    ?: null,
+                        'hrs_monel'  => $this->hr_monel  ?: null,
+                        'hrs_otro'   => $this->hr_otro   ?: null,
+                    ]
+                );
+
+                foreach (['FALTANTES' => $this->com_faltantes, 'NPT' => $this->com_npt, 'GENERAL' => $this->com_general] as $tipo => $contenido) {
+                    \App\Models\ComentarioReporte::updateOrCreate(
+                        ['reporte_id' => $this->reporteId, 'tipo' => $tipo],
+                        ['contenido' => $contenido ?: null]
+                    );
+                }
+            }
 
             // Paso 4 — BHA, inventario, top drive, equipos reparación
             if ($this->paso >= 4) {
@@ -639,7 +741,7 @@ class WizardReporte extends Component
         $r = MorningReport::with([
             'personal', 'operaciones', 'lodo', 'bombas',
             'cable', 'diesel', 'bhaBroca', 'inventarioTuberia',
-            'topDrive', 'equiposReparacion',
+            'topDrive', 'equiposReparacion', 'parametros', 'comentarios',
         ])->findOrFail($this->reporteId);
 
         $this->rig                            = $r->rig ?? '';
@@ -755,6 +857,45 @@ class WizardReporte extends Component
                 'noche_hrs'   => $op->noche_hrs ?? '0',
                 'dia_hrs'     => $op->dia_hrs ?? '0',
             ])->toArray();
+        }
+
+        // Personal en locación
+        $this->personal_grs       = $r->personal_grs       ?? 0;
+        $this->personal_ecopetrol = $r->personal_ecopetrol ?? 0;
+        $this->personal_flotantes = $r->personal_flotantes ?? 0;
+
+        // Parámetros de perforación
+        foreach ($r->parametros as $p) {
+            $prefix = strtolower($p->turno === 'DIA' ? 'par_dia' : 'par_noche');
+            $this->{"{$prefix}_peso_sub"}      = $p->peso_subiendo;
+            $this->{"{$prefix}_peso_baj"}      = $p->peso_bajando;
+            $this->{"{$prefix}_peso_rot"}      = $p->peso_rotacion;
+            $this->{"{$prefix}_presion_bomba"} = $p->presion_bomba_psi;
+            $this->{"{$prefix}_rpm"}           = $p->rpm;
+            $this->{"{$prefix}_torque"}        = $p->torque;
+            $this->{"{$prefix}_wob"}           = $p->wob;
+            $this->{"{$prefix}_spm"}           = $p->spm;
+            $this->{"{$prefix}_gpm"}           = $p->gpm;
+            $this->{"{$prefix}_rop"}           = $p->rop;
+        }
+
+        // Comentarios y horas tubería
+        foreach ($r->comentarios as $c) {
+            match ($c->tipo) {
+                'FALTANTES'     => $this->com_faltantes = $c->contenido ?? '',
+                'NPT'           => $this->com_npt       = $c->contenido ?? '',
+                'GENERAL'       => $this->com_general   = $c->contenido ?? '',
+                'HORAS_ROTACION' => (function () use ($c) {
+                    $this->hr_5dp   = $c->hrs_5dp;
+                    $this->hr_5hwdp = $c->hrs_5hwdp;
+                    $this->hr_6dc   = $c->hrs_6dc;
+                    $this->hr_8dc   = $c->hrs_8dc;
+                    $this->hr_jar   = $c->hrs_jar;
+                    $this->hr_monel = $c->hrs_monel;
+                    $this->hr_otro  = $c->hrs_otro;
+                })(),
+                default => null,
+            };
         }
 
         $this->cargarPozos();

@@ -16,6 +16,7 @@ class MorningReport extends Model
         'dias_spud', 'prof_programada_ft', 'prof_ayer_ft', 'prof_hoy_ft',
         'ft_perforados', 'operacion_actual', 'hrs_rotacion', 'horas_acum_rotacion',
         'prueba_preventoras_fecha', 'prueba_preventoras_comentarios',
+        'personal_grs', 'personal_ecopetrol', 'personal_flotantes',
         'creado_por', 'estado', 'pdf_path',
     ];
 
