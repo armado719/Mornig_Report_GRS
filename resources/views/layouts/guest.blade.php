@@ -16,9 +16,9 @@
     <style>
         @keyframes kenBurns {
             0%   { transform: scale(1.0) translate(0%, 0%); }
-            25%  { transform: scale(1.08) translate(-1.5%, -1%); }
-            50%  { transform: scale(1.12) translate(1%, -1.5%); }
-            75%  { transform: scale(1.08) translate(-1%, 1%); }
+            25%  { transform: scale(1.07) translate(-1%, -0.5%); }
+            50%  { transform: scale(1.1) translate(0.5%, -1%); }
+            75%  { transform: scale(1.07) translate(-0.5%, 0.5%); }
             100% { transform: scale(1.0) translate(0%, 0%); }
         }
         .bg-ken-burns {
@@ -30,19 +30,21 @@
 </head>
 <body class="h-full font-sans antialiased" style="background:#061209;">
 
-    <div class="min-h-screen flex items-center justify-start relative overflow-hidden"
+    <div class="min-h-screen flex items-center relative overflow-hidden"
          style="background: linear-gradient(135deg, #061209 0%, #0D1F17 50%, #0a1a10 100%);">
 
         {{-- Imagen de fondo con animación Ken Burns --}}
         @if(file_exists(public_path('images/bg-login.jpg')))
         <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute bg-ken-burns bg-cover bg-center"
-                 style="inset:-6%; background-image:url('/images/bg-login.jpg');"></div>
-            <div class="absolute inset-0" style="background:rgba(4,14,8,0.68);"></div>
+            <div class="absolute bg-ken-burns bg-cover"
+                 style="inset:-6%; background-image:url('/images/bg-login.jpg'); background-position:38% center;"></div>
+            {{-- Overlay: oscuro a los lados, semitransparente al centro --}}
+            <div class="absolute inset-0"
+                 style="background: linear-gradient(to right, rgba(4,14,8,0.25) 0%, rgba(4,14,8,0.1) 40%, rgba(4,14,8,0.75) 70%, rgba(4,14,8,0.92) 100%);"></div>
         </div>
         @endif
 
-        {{-- Patrón de fondo decorativo --}}
+        {{-- Patrón decorativo (muy sutil) --}}
         <div class="absolute inset-0 opacity-5" style="pointer-events:none;">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -54,59 +56,52 @@
             </svg>
         </div>
 
-        {{-- Card de login --}}
-        <div class="relative z-10 w-full max-w-sm mx-auto lg:ml-20 xl:ml-40 px-6 py-6">
-            <div class="rounded-2xl p-8 shadow-2xl border"
-                 style="background:rgba(13,31,23,0.72); backdrop-filter:blur(16px); border-color:rgba(109,190,109,0.2);">
-
-                {{-- Logo y nombre --}}
-                <div class="flex flex-col items-center mb-6">
-                    @if(file_exists(public_path('images/grs-logo.png')))
-                        <img src="/images/grs-logo.png" alt="GRS"
-                             class="w-20 h-20 rounded-full object-cover mb-3 shadow-lg"
-                             style="border:2px solid rgba(109,190,109,0.4);">
-                    @else
-                        <div class="w-20 h-20 rounded-full flex items-center justify-center mb-3 border-2"
-                             style="background:rgba(13,31,23,0.8); border-color:#2D7A4F;">
-                            <x-grs-logo size="md"/>
-                        </div>
-                    @endif
-                    <h1 class="text-white font-bold text-xl tracking-wide">GRS</h1>
-                    <p class="text-grs-verde text-xs text-center mt-0.5">General Rigs Services S.A.S.</p>
-                    <div class="w-12 h-0.5 mt-3" style="background:#6DBE6D;"></div>
-                </div>
-
-                {{-- Formulario --}}
-                {{ $slot }}
-
-                {{-- Footer --}}
-                <p class="text-center text-xs mt-6" style="color:rgba(209,213,219,0.35);">
-                    Morning Report GRS © {{ date('Y') }}
-                </p>
+        {{-- Espacio izquierdo (trabajadores visibles) --}}
+        <div class="hidden lg:flex flex-col justify-end flex-1 px-10 pb-12">
+            <div style="text-shadow:0 2px 12px rgba(0,0,0,0.9);">
+                <p class="text-grs-verde text-xs font-bold uppercase tracking-widest mb-1">General Rigs Services S.A.S.</p>
+                <h2 class="text-4xl font-black text-white mb-1">Morning Report</h2>
+                <p class="text-grs-verde text-lg font-semibold">FGPO-002</p>
             </div>
         </div>
 
-        {{-- Texto derecho decorativo (solo desktop) --}}
-        <div class="hidden lg:flex flex-col justify-center flex-1 px-16 xl:px-24">
-            <div class="max-w-md">
-                <h2 class="text-3xl font-bold text-white mb-2" style="text-shadow:0 2px 12px rgba(0,0,0,0.8);">Morning Report</h2>
-                <h3 class="text-grs-verde text-xl font-semibold mb-4">FGPO-002</h3>
-                <p class="text-grs-texto text-sm leading-relaxed mb-8" style="text-shadow:0 1px 6px rgba(0,0,0,0.7);">
-                    Sistema de gestión de reportes diarios de operaciones de perforación.
-                </p>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3 text-sm text-grs-texto">
-                        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background:#6DBE6D;"></div>
-                        <span style="text-shadow:0 1px 4px rgba(0,0,0,0.7);">Reporte Diario de Operaciones</span>
+        {{-- Card de login — lado derecho --}}
+        <div class="relative z-10 w-full max-w-sm mx-auto lg:mx-0 px-5 py-8 lg:mr-16 xl:mr-24 flex-shrink-0">
+            <div class="rounded-2xl shadow-2xl overflow-hidden"
+                 style="background:rgba(10,24,15,0.82); backdrop-filter:blur(20px); border:1px solid rgba(109,190,109,0.22);">
+
+                {{-- Franja verde superior --}}
+                <div class="h-1 w-full" style="background:linear-gradient(90deg,#2D7A4F,#6DBE6D,#2D7A4F);"></div>
+
+                <div class="p-8">
+                    {{-- Logo y nombre --}}
+                    <div class="flex flex-col items-center mb-7">
+                        @if(file_exists(public_path('images/grs-logo.png')))
+                            <img src="/images/grs-logo.png" alt="GRS"
+                                 class="w-20 h-20 rounded-full object-cover mb-4 shadow-xl"
+                                 style="border:2px solid rgba(109,190,109,0.5); box-shadow:0 0 24px rgba(45,122,79,0.4);">
+                        @else
+                            <div class="w-20 h-20 rounded-full flex items-center justify-center mb-4 border-2"
+                                 style="background:rgba(13,31,23,0.8); border-color:#2D7A4F;">
+                                <x-grs-logo size="md"/>
+                            </div>
+                        @endif
+                        <h1 class="text-white font-bold text-lg tracking-widest">GRS</h1>
+                        <p class="text-grs-verde text-xs text-center mt-0.5 tracking-wide">General Rigs Services S.A.S.</p>
+                        <div class="flex items-center gap-2 mt-3">
+                            <div class="h-px w-8" style="background:rgba(109,190,109,0.3);"></div>
+                            <div class="w-1.5 h-1.5 rounded-full" style="background:#6DBE6D;"></div>
+                            <div class="h-px w-8" style="background:rgba(109,190,109,0.3);"></div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3 text-sm text-grs-texto">
-                        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background:#6DBE6D;"></div>
-                        <span style="text-shadow:0 1px 4px rgba(0,0,0,0.7);">Exportación PDF y Excel certificados</span>
-                    </div>
-                    <div class="flex items-center gap-3 text-sm text-grs-texto">
-                        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background:#6DBE6D;"></div>
-                        <span style="text-shadow:0 1px 4px rgba(0,0,0,0.7);">Control de RIGs y pozos en tiempo real</span>
-                    </div>
+
+                    {{-- Formulario --}}
+                    {{ $slot }}
+
+                    {{-- Footer --}}
+                    <p class="text-center text-xs mt-6" style="color:rgba(209,213,219,0.3);">
+                        Morning Report GRS © {{ date('Y') }}
+                    </p>
                 </div>
             </div>
         </div>
