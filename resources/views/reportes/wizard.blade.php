@@ -1,4 +1,6 @@
 <x-app-layout>
-    <x-slot name="titulo">Nuevo Reporte</x-slot>
-    <div class="card-grs"><p class="text-white">Wizard 5 pasos — próximamente</p></div>
+    <x-slot name="titulo">Nuevo Reporte — FGPO-002</x-slot>
+
+    @livewire('wizard-reporte', ['id' => $id ?? null])
+
 </x-app-layout>
