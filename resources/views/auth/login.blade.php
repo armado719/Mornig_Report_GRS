@@ -16,7 +16,7 @@
                 autofocus
                 autocomplete="username"
                 placeholder="usuario@grs.com"
-                class="input-grs @error('email') border-red-500 @enderror"
+                class="w-full rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-grs-verde @error('email') border-red-400 @enderror"
             />
             @error('email')
                 <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
@@ -34,7 +34,7 @@
                     required
                     autocomplete="current-password"
                     placeholder="••••••••"
-                    class="input-grs @error('password') border-red-500 @enderror pr-10"
+                    class="w-full rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-grs-verde pr-10 @error('password') border-red-400 @enderror"
                 />
                 {{-- Toggle mostrar contraseña --}}
                 <button type="button"
@@ -69,8 +69,9 @@
         </div>
 
         {{-- Botón --}}
-        <button type="submit" class="btn-grs w-full py-3 text-base mt-2">
-            Ingresar al sistema
+        <button type="submit" class="w-full py-3 text-base font-bold rounded-lg transition-all mt-2"
+                style="background:#6DBE6D; color:#0D1F17;">
+            Iniciar sesión
         </button>
 
         @if (Route::has('password.request'))
