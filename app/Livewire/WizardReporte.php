@@ -80,6 +80,26 @@ class WizardReporte extends Component
     public ?string $d_usado     = null;
     public ?string $d_acumulado = null;
 
+    // ── Paso 4 — BHA + Broca ──────────────────────────────────────────
+    public string  $bha_numero    = '';
+    public string  $bha_tamano    = '';
+    public string  $bha_tipo      = '';
+    public string  $bha_jets      = '';
+    public string  $bha_serie     = '';
+    public ?string $bha_total_bha = null;
+
+    // ── Paso 4 — Inventario de tubería (dinámico) ─────────────────────
+    public array $inventario = [];
+
+    // ── Paso 4 — Top Drive ────────────────────────────────────────────
+    public ?string $td_hrs_rotacion = null;
+    public ?string $td_hrs_unidad   = null;
+    public ?string $td_hrs_motor    = null;
+    public ?string $td_acum_rotacion = null;
+
+    // ── Paso 4 — Equipos en reparación (dinámico) ─────────────────────
+    public array $equipos = [];
+
     // ── Catálogos ─────────────────────────────────────────────────────
     public array $rigs = [];
     public array $pozos = [];
@@ -163,6 +183,8 @@ class WizardReporte extends Component
         $this->fecha = now()->format('Y-m-d');
         $this->iniciarOperaciones();
         $this->iniciarBombas();
+        $this->iniciarInventario();
+        $this->iniciarEquipos();
 
         if ($id) {
             $this->reporteId = $id;
@@ -259,6 +281,44 @@ class WizardReporte extends Component
         $this->operaciones = array_values($this->operaciones);
     }
 
+    // ── Acciones paso 4 ───────────────────────────────────────────────
+
+    public function addInventario(): void
+    {
+        $this->inventario[] = ['diametro' => '', 'torre' => 0, 'base_reparacion' => 0, 'locacion' => 0, 'total' => 0];
+    }
+
+    public function removeInventario(int $i): void
+    {
+        array_splice($this->inventario, $i, 1);
+        $this->inventario = array_values($this->inventario);
+    }
+
+    public function updatedInventario($value, $key): void
+    {
+        $parts = explode('.', $key);
+        $i     = (int) $parts[0];
+        $field = $parts[1] ?? '';
+
+        if (in_array($field, ['torre', 'base_reparacion', 'locacion'])) {
+            $this->inventario[$i]['total'] =
+                (int)($this->inventario[$i]['torre']          ?? 0) +
+                (int)($this->inventario[$i]['base_reparacion'] ?? 0) +
+                (int)($this->inventario[$i]['locacion']        ?? 0);
+        }
+    }
+
+    public function addEquipo(): void
+    {
+        $this->equipos[] = ['equipo' => '', 'dias' => 0, 'motivo' => '', 'estado' => '', 'comentarios' => ''];
+    }
+
+    public function removeEquipo(int $i): void
+    {
+        array_splice($this->equipos, $i, 1);
+        $this->equipos = array_values($this->equipos);
+    }
+
     // Getter reactivo: total de horas ingresadas
     public function getTotalHorasProperty(): float
     {
@@ -311,6 +371,55 @@ class WizardReporte extends Component
                     'dias_sin_rwc' => $this->p_dias_sin_rwc,
                 ]
             );
+
+            // Paso 4 — BHA, inventario, top drive, equipos reparación
+            if ($this->paso >= 4) {
+                \App\Models\BhaBroca::updateOrCreate(
+                    ['reporte_id' => $this->reporteId],
+                    [
+                        'numero'    => $this->bha_numero    ?: null,
+                        'tamano'    => $this->bha_tamano    ?: null,
+                        'tipo'      => $this->bha_tipo      ?: null,
+                        'jets'      => $this->bha_jets      ?: null,
+                        'serie'     => $this->bha_serie     ?: null,
+                        'total_bha' => $this->bha_total_bha ?: null,
+                    ]
+                );
+
+                \App\Models\InventarioTuberia::where('reporte_id', $this->reporteId)->delete();
+                foreach ($this->inventario as $inv) {
+                    if (empty($inv['diametro'])) continue;
+                    \App\Models\InventarioTuberia::create(['reporte_id' => $this->reporteId] + [
+                        'diametro'         => $inv['diametro'],
+                        'torre'            => (int)($inv['torre']           ?? 0),
+                        'base_reparacion'  => (int)($inv['base_reparacion'] ?? 0),
+                        'locacion'         => (int)($inv['locacion']        ?? 0),
+                        'total'            => (int)($inv['total']           ?? 0),
+                    ]);
+                }
+
+                \App\Models\TopDrive::updateOrCreate(
+                    ['reporte_id' => $this->reporteId],
+                    [
+                        'hrs_rotacion'  => $this->td_hrs_rotacion  ?: null,
+                        'hrs_unidad'    => $this->td_hrs_unidad    ?: null,
+                        'hrs_motor'     => $this->td_hrs_motor     ?: null,
+                        'acum_rotacion' => $this->td_acum_rotacion ?: null,
+                    ]
+                );
+
+                \App\Models\EquipoReparacion::where('reporte_id', $this->reporteId)->delete();
+                foreach ($this->equipos as $eq) {
+                    if (empty($eq['equipo'])) continue;
+                    \App\Models\EquipoReparacion::create(['reporte_id' => $this->reporteId] + [
+                        'equipo'      => $eq['equipo'],
+                        'dias'        => (int)($eq['dias']        ?? 0),
+                        'motivo'      => $eq['motivo']      ?: null,
+                        'estado'      => $eq['estado']      ?: null,
+                        'comentarios' => $eq['comentarios'] ?: null,
+                    ]);
+                }
+            }
 
             // Paso 3 — lodo, bombas, cable, diesel
             if ($this->paso >= 3) {
@@ -461,13 +570,29 @@ class WizardReporte extends Component
     private function iniciarBombas(): void
     {
         $this->bombas = array_map(fn($n) => [
-            'numero'         => "Bomba $n",
-            'camisa_diametro'=> '',
-            'profundidad_ft' => '',
-            'peso_lodo_ppg'  => '',
-            'spm'            => '',
-            'presion_psi'    => '',
+            'numero'          => "Bomba $n",
+            'camisa_diametro' => '',
+            'profundidad_ft'  => '',
+            'peso_lodo_ppg'   => '',
+            'spm'             => '',
+            'presion_psi'     => '',
         ], [1, 2, 3]);
+    }
+
+    private function iniciarInventario(): void
+    {
+        // Diámetros comunes de tubería en perforación
+        $this->inventario = [
+            ['diametro' => '5" DP NC-50',       'torre' => 0, 'base_reparacion' => 0, 'locacion' => 0, 'total' => 0],
+            ['diametro' => '5" HWDP NC-50',      'torre' => 0, 'base_reparacion' => 0, 'locacion' => 0, 'total' => 0],
+            ['diametro' => '6½" DC NC-50',       'torre' => 0, 'base_reparacion' => 0, 'locacion' => 0, 'total' => 0],
+            ['diametro' => '8" DC NC-61',        'torre' => 0, 'base_reparacion' => 0, 'locacion' => 0, 'total' => 0],
+        ];
+    }
+
+    private function iniciarEquipos(): void
+    {
+        $this->equipos = [];
     }
 
     private function iniciarOperaciones(): void
@@ -513,7 +638,8 @@ class WizardReporte extends Component
     {
         $r = MorningReport::with([
             'personal', 'operaciones', 'lodo', 'bombas',
-            'cable', 'diesel',
+            'cable', 'diesel', 'bhaBroca', 'inventarioTuberia',
+            'topDrive', 'equiposReparacion',
         ])->findOrFail($this->reporteId);
 
         $this->rig                            = $r->rig ?? '';
@@ -576,6 +702,46 @@ class WizardReporte extends Component
             $this->d_hoy       = $r->diesel->hoy;
             $this->d_usado     = $r->diesel->usado;
             $this->d_acumulado = $r->diesel->acumulado;
+        }
+
+        // BHA + Broca
+        if ($r->bhaBroca) {
+            $this->bha_numero    = $r->bhaBroca->numero    ?? '';
+            $this->bha_tamano    = $r->bhaBroca->tamano    ?? '';
+            $this->bha_tipo      = $r->bhaBroca->tipo      ?? '';
+            $this->bha_jets      = $r->bhaBroca->jets      ?? '';
+            $this->bha_serie     = $r->bhaBroca->serie     ?? '';
+            $this->bha_total_bha = $r->bhaBroca->total_bha;
+        }
+
+        // Inventario tubería
+        if ($r->inventarioTuberia->isNotEmpty()) {
+            $this->inventario = $r->inventarioTuberia->map(fn($inv) => [
+                'diametro'        => $inv->diametro        ?? '',
+                'torre'           => $inv->torre           ?? 0,
+                'base_reparacion' => $inv->base_reparacion ?? 0,
+                'locacion'        => $inv->locacion        ?? 0,
+                'total'           => $inv->total           ?? 0,
+            ])->toArray();
+        }
+
+        // Top Drive
+        if ($r->topDrive) {
+            $this->td_hrs_rotacion  = $r->topDrive->hrs_rotacion;
+            $this->td_hrs_unidad    = $r->topDrive->hrs_unidad;
+            $this->td_hrs_motor     = $r->topDrive->hrs_motor;
+            $this->td_acum_rotacion = $r->topDrive->acum_rotacion;
+        }
+
+        // Equipos en reparación
+        if ($r->equiposReparacion->isNotEmpty()) {
+            $this->equipos = $r->equiposReparacion->map(fn($eq) => [
+                'equipo'      => $eq->equipo      ?? '',
+                'dias'        => $eq->dias        ?? 0,
+                'motivo'      => $eq->motivo      ?? '',
+                'estado'      => $eq->estado      ?? '',
+                'comentarios' => $eq->comentarios ?? '',
+            ])->toArray();
         }
 
         if ($r->operaciones->isNotEmpty()) {
