@@ -1,17 +1,8 @@
 services:
   - type: web
     name: morning-report-grs
-    runtime: php
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader
-      npm ci
-      npm run build
-      php artisan storage:link
-      php artisan migrate --force
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
-    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    runtime: docker
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_NAME
         value: "Morning Report GRS"
@@ -31,7 +22,7 @@ services:
       - key: DB_HOST
         sync: false
       - key: DB_PORT
-        value: "3306"
+        value: "19972"
       - key: DB_DATABASE
         value: morning_report_grs
       - key: DB_USERNAME
