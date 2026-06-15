@@ -48,6 +48,38 @@ class WizardReporte extends Component
     // ── Paso 2 — Cronología de operaciones ────────────────────────────
     public array $operaciones = [];
 
+    // ── Paso 3 — Lodo ─────────────────────────────────────────────────
+    public string $l_tipo       = '';
+    public string $l_viscosidad = '';
+    public string $l_geles      = '';
+    public ?string $l_peso      = null;
+    public ?string $l_pv        = null;
+    public ?string $l_yp        = null;
+    public ?string $l_torta     = null;
+    public ?string $l_ph        = null;
+    public ?string $l_cloruros  = null;
+    public ?string $l_oil_pct   = null;
+    public ?string $l_flu_loss  = null;
+    public ?string $l_solidos   = null;
+    public ?string $l_arena     = null;
+
+    // ── Paso 3 — Bombas de lodo (3 fijas) ────────────────────────────
+    public array $bombas = [];
+
+    // ── Paso 3 — Cable de perforación ─────────────────────────────────
+    public string  $c_diametro           = '';
+    public ?string $c_ton_milla_acumulada = null;
+    public ?string $c_ton_milla_dia       = null;
+    public ?string $c_sobrante_ft         = null;
+    public string  $c_comentarios         = '';
+
+    // ── Paso 3 — Diesel (galones) ─────────────────────────────────────
+    public ?string $d_recibido  = null;
+    public ?string $d_ayer      = null;
+    public ?string $d_hoy       = null;
+    public ?string $d_usado     = null;
+    public ?string $d_acumulado = null;
+
     // ── Catálogos ─────────────────────────────────────────────────────
     public array $rigs = [];
     public array $pozos = [];
@@ -130,6 +162,7 @@ class WizardReporte extends Component
 
         $this->fecha = now()->format('Y-m-d');
         $this->iniciarOperaciones();
+        $this->iniciarBombas();
 
         if ($id) {
             $this->reporteId = $id;
@@ -156,6 +189,10 @@ class WizardReporte extends Component
 
     public function updatedProfAyerFt(): void { $this->calcularFtPerforados(); }
     public function updatedProfHoyFt(): void  { $this->calcularFtPerforados(); }
+
+    public function updatedDAyer(): void    { $this->calcularDiesel(); }
+    public function updatedDRecibido(): void { $this->calcularDiesel(); }
+    public function updatedDHoy(): void     { $this->calcularDiesel(); }
 
     // Recalcula horas de una fila cuando cambian los tiempos
     public function updatedOperaciones($value, $key): void
@@ -275,6 +312,56 @@ class WizardReporte extends Component
                 ]
             );
 
+            // Paso 3 — lodo, bombas, cable, diesel
+            if ($this->paso >= 3) {
+                \App\Models\LodoReporte::updateOrCreate(
+                    ['reporte_id' => $this->reporteId],
+                    [
+                        'tipo'       => $this->l_tipo       ?: null,
+                        'viscosidad' => $this->l_viscosidad ?: null,
+                        'geles'      => $this->l_geles      ?: null,
+                        'peso'       => $this->l_peso       ?: null,
+                        'pv'         => $this->l_pv         ?: null,
+                        'yp'         => $this->l_yp         ?: null,
+                        'torta'      => $this->l_torta      ?: null,
+                        'ph'         => $this->l_ph         ?: null,
+                        'cloruros'   => $this->l_cloruros   ?: null,
+                        'oil_pct'    => $this->l_oil_pct    ?: null,
+                        'flu_loss'   => $this->l_flu_loss   ?: null,
+                        'solidos'    => $this->l_solidos    ?: null,
+                        'arena'      => $this->l_arena      ?: null,
+                    ]
+                );
+
+                \App\Models\BombaLodo::where('reporte_id', $this->reporteId)->delete();
+                foreach ($this->bombas as $bomba) {
+                    if (empty($bomba['numero']) && empty($bomba['presion_psi'])) continue;
+                    \App\Models\BombaLodo::create(['reporte_id' => $this->reporteId] + $bomba);
+                }
+
+                \App\Models\CablePerforacion::updateOrCreate(
+                    ['reporte_id' => $this->reporteId],
+                    [
+                        'diametro'            => $this->c_diametro            ?: null,
+                        'ton_milla_acumulada' => $this->c_ton_milla_acumulada ?: null,
+                        'ton_milla_dia'       => $this->c_ton_milla_dia       ?: null,
+                        'sobrante_ft'         => $this->c_sobrante_ft         ?: null,
+                        'comentarios'         => $this->c_comentarios         ?: null,
+                    ]
+                );
+
+                \App\Models\DieselReporte::updateOrCreate(
+                    ['reporte_id' => $this->reporteId],
+                    [
+                        'recibido'  => $this->d_recibido  ?: null,
+                        'ayer'      => $this->d_ayer      ?: null,
+                        'hoy'       => $this->d_hoy       ?: null,
+                        'usado'     => $this->d_usado     ?: null,
+                        'acumulado' => $this->d_acumulado ?: null,
+                    ]
+                );
+            }
+
             // Paso 2 — sincronizar operaciones
             if ($this->paso >= 2) {
                 OperacionLog::where('reporte_id', $this->reporteId)->delete();
@@ -362,6 +449,27 @@ class WizardReporte extends Component
         $this->operaciones[$index]['dia_hrs']   = $turno === 'DIA'   ? (string) $horas : '0';
     }
 
+    private function calcularDiesel(): void
+    {
+        if (is_numeric($this->d_ayer) && is_numeric($this->d_recibido) && is_numeric($this->d_hoy)) {
+            $this->d_usado = (string) round(
+                (float)$this->d_ayer + (float)$this->d_recibido - (float)$this->d_hoy, 2
+            );
+        }
+    }
+
+    private function iniciarBombas(): void
+    {
+        $this->bombas = array_map(fn($n) => [
+            'numero'         => "Bomba $n",
+            'camisa_diametro'=> '',
+            'profundidad_ft' => '',
+            'peso_lodo_ppg'  => '',
+            'spm'            => '',
+            'presion_psi'    => '',
+        ], [1, 2, 3]);
+    }
+
     private function iniciarOperaciones(): void
     {
         // Empieza con 3 filas vacías
@@ -403,7 +511,10 @@ class WizardReporte extends Component
 
     private function cargarReporte(): void
     {
-        $r = MorningReport::with(['personal', 'operaciones'])->findOrFail($this->reporteId);
+        $r = MorningReport::with([
+            'personal', 'operaciones', 'lodo', 'bombas',
+            'cable', 'diesel',
+        ])->findOrFail($this->reporteId);
 
         $this->rig                            = $r->rig ?? '';
         $this->pozo                           = $r->pozo ?? '';
@@ -428,6 +539,43 @@ class WizardReporte extends Component
             $this->p_hseq         = $r->personal->hseq ?? '';
             $this->p_dias_sin_lti = $r->personal->dias_sin_lti ?? 0;
             $this->p_dias_sin_rwc = $r->personal->dias_sin_rwc ?? 0;
+        }
+
+        // Lodo
+        if ($r->lodo) {
+            foreach (['tipo','viscosidad','geles','peso','pv','yp','torta','ph','cloruros','oil_pct','flu_loss','solidos','arena'] as $campo) {
+                $this->{"l_$campo"} = $r->lodo->$campo ?? ($campo === 'tipo' || $campo === 'viscosidad' || $campo === 'geles' ? '' : null);
+            }
+        }
+
+        // Bombas
+        if ($r->bombas->isNotEmpty()) {
+            $this->bombas = $r->bombas->map(fn($b) => [
+                'numero'          => $b->numero ?? '',
+                'camisa_diametro' => $b->camisa_diametro ?? '',
+                'profundidad_ft'  => $b->profundidad_ft,
+                'peso_lodo_ppg'   => $b->peso_lodo_ppg,
+                'spm'             => $b->spm,
+                'presion_psi'     => $b->presion_psi,
+            ])->toArray();
+        }
+
+        // Cable
+        if ($r->cable) {
+            $this->c_diametro            = $r->cable->diametro ?? '';
+            $this->c_ton_milla_acumulada = $r->cable->ton_milla_acumulada;
+            $this->c_ton_milla_dia       = $r->cable->ton_milla_dia;
+            $this->c_sobrante_ft         = $r->cable->sobrante_ft;
+            $this->c_comentarios         = $r->cable->comentarios ?? '';
+        }
+
+        // Diesel
+        if ($r->diesel) {
+            $this->d_recibido  = $r->diesel->recibido;
+            $this->d_ayer      = $r->diesel->ayer;
+            $this->d_hoy       = $r->diesel->hoy;
+            $this->d_usado     = $r->diesel->usado;
+            $this->d_acumulado = $r->diesel->acumulado;
         }
 
         if ($r->operaciones->isNotEmpty()) {
