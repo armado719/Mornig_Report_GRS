@@ -35,4 +35,4 @@ CMD sh -c "php artisan storage:link --quiet && \
     php artisan db:seed --force && \
     php artisan config:cache && \
     php artisan route:cache && \
-    php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+    php -S 0.0.0.0:${PORT:-8000} -t /var/www/html/public /var/www/html/server.php"
