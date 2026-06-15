@@ -2,12 +2,12 @@ FROM php:8.4-fpm-alpine
 
 # Dependencias del sistema
 RUN apk add --no-cache \
-    git curl zip unzip \
+    git curl zip unzip libzip-dev \
     libpng-dev oniguruma-dev libxml2-dev \
     nodejs npm
 
 # Extensiones PHP
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
