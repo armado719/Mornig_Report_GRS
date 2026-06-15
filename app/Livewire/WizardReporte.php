@@ -3,9 +3,9 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Livewire\Attributes\Validate;
 use App\Models\MorningReport;
 use App\Models\PersonalReporte;
+use App\Models\OperacionLog;
 use App\Models\Rig;
 use App\Models\Pozo;
 use Illuminate\Support\Facades\Auth;
@@ -45,21 +45,56 @@ class WizardReporte extends Component
     public int $p_dias_sin_lti = 0;
     public int $p_dias_sin_rwc = 0;
 
+    // ── Paso 2 — Cronología de operaciones ────────────────────────────
+    public array $operaciones = [];
+
     // ── Catálogos ─────────────────────────────────────────────────────
     public array $rigs = [];
     public array $pozos = [];
 
-    // ── Reglas de validación por paso ─────────────────────────────────
+    // Códigos de operación estándar API
+    public const CODIGOS = [
+        '1'  => 'Perforando',
+        '2'  => 'Reaming / Lavando',
+        '3'  => 'Circulando',
+        '4'  => 'Conexión de tubería',
+        '5'  => 'Entrando a pozo (RIH)',
+        '6'  => 'Sacando de pozo (POOH)',
+        '7'  => 'Preparando BHA',
+        '8'  => 'Cambio de broca',
+        '9'  => 'Registro eléctrico (LWD/MWD)',
+        '10' => 'Cementación',
+        '11' => 'Esperando cemento (WOC)',
+        '12' => 'Bajando casing',
+        '13' => 'Espera (WOW / instrucciones)',
+        '14' => 'Reparación mecánica',
+        '15' => 'Reparación eléctrica',
+        '16' => 'NPT — Tiempo no productivo',
+        '17' => 'Prueba de preventoras (BOP)',
+        '18' => 'Pesca',
+        '19' => 'Operaciones de lodo',
+        '20' => 'Seguridad / HSE',
+        '21' => 'Movimiento de materiales',
+        '22' => 'Dirección / MWD / Survey',
+        '23' => 'Otros',
+        'A'  => 'A — Perforación especial',
+        'B'  => 'B — Operación de completación',
+        'C'  => 'C — Workover',
+        'D'  => 'D — Pulling unit',
+        'E'  => 'E — Servicio de pozo',
+        'F'  => 'F — Abandono',
+    ];
+
+    // ── Validación por paso ────────────────────────────────────────────
     protected function reglaPaso1(): array
     {
         return [
-            'rig'              => 'required|string',
-            'pozo'             => 'required|string',
-            'fecha'            => 'required|date',
-            'operacion_actual' => 'nullable|string|max:255',
-            'prof_ayer_ft'     => 'nullable|numeric|min:0',
-            'prof_hoy_ft'      => 'nullable|numeric|min:0',
-            'hrs_rotacion'     => 'nullable|numeric|min:0|max:24',
+            'rig'          => 'required|string',
+            'pozo'         => 'required|string',
+            'fecha'        => 'required|date',
+            'prof_ayer_ft' => 'nullable|numeric|min:0',
+            'prof_hoy_ft'  => 'nullable|numeric|min:0',
+            'hrs_rotacion' => 'nullable|numeric|min:0|max:24',
         ];
     }
 
@@ -72,13 +107,21 @@ class WizardReporte extends Component
         ];
     }
 
+    protected function reglaPaso2(): array
+    {
+        return [
+            'operaciones.*.hora_desde'  => 'nullable|date_format:H:i',
+            'operaciones.*.hora_hasta'  => 'nullable|date_format:H:i',
+            'operaciones.*.codigo'      => 'nullable|string',
+            'operaciones.*.descripcion' => 'nullable|string|max:500',
+        ];
+    }
+
     // ── Ciclo de vida ─────────────────────────────────────────────────
     public function mount(?int $id = null): void
     {
-        // Cargar catálogos
         $this->rigs = Rig::where('activo', true)->pluck('numero', 'numero')->toArray();
 
-        // Si el usuario es RIG_MANAGER, pre-seleccionar su RIG
         $user = Auth::user();
         if ($user->rig) {
             $this->rig = $user->rig;
@@ -86,6 +129,7 @@ class WizardReporte extends Component
         }
 
         $this->fecha = now()->format('Y-m-d');
+        $this->iniciarOperaciones();
 
         if ($id) {
             $this->reporteId = $id;
@@ -97,9 +141,7 @@ class WizardReporte extends Component
 
     public function updatedRig(): void
     {
-        $this->pozo      = '';
-        $this->municipio = '';
-        $this->operador  = '';
+        $this->pozo = $this->municipio = $this->operador = '';
         $this->cargarPozos();
     }
 
@@ -112,17 +154,27 @@ class WizardReporte extends Component
         }
     }
 
-    public function updatedProfAyerFt(): void
+    public function updatedProfAyerFt(): void { $this->calcularFtPerforados(); }
+    public function updatedProfHoyFt(): void  { $this->calcularFtPerforados(); }
+
+    // Recalcula horas de una fila cuando cambian los tiempos
+    public function updatedOperaciones($value, $key): void
     {
-        $this->calcularFtPerforados();
+        $parts = explode('.', $key);
+        $index = (int) $parts[0];
+        $field = $parts[1] ?? '';
+
+        if (in_array($field, ['hora_desde', 'hora_hasta'])) {
+            $this->calcularHorasFila($index);
+            $this->autoDetectarTurno($index);
+        }
+
+        if ($field === 'turno') {
+            $this->distribuirHorasTurno($index);
+        }
     }
 
-    public function updatedProfHoyFt(): void
-    {
-        $this->calcularFtPerforados();
-    }
-
-    // ── Acciones ──────────────────────────────────────────────────────
+    // ── Acciones del wizard ───────────────────────────────────────────
 
     public function siguientePaso(): void
     {
@@ -139,67 +191,118 @@ class WizardReporte extends Component
 
     public function irAPaso(int $paso): void
     {
-        // Solo puede ir a pasos ya guardados
         if ($paso < $this->paso || $this->reporteId) {
             $this->guardarBorrador();
             $this->paso = $paso;
         }
     }
 
+    // ── Acciones paso 2 ───────────────────────────────────────────────
+
+    public function addOperacion(): void
+    {
+        $this->operaciones[] = $this->filaVacia(count($this->operaciones));
+    }
+
+    public function removeOperacion(int $index): void
+    {
+        array_splice($this->operaciones, $index, 1);
+        // Re-indexar para Livewire
+        $this->operaciones = array_values($this->operaciones);
+    }
+
+    public function moverFila(int $index, string $direccion): void
+    {
+        $target = $direccion === 'up' ? $index - 1 : $index + 1;
+        if ($target < 0 || $target >= count($this->operaciones)) {
+            return;
+        }
+        [$this->operaciones[$index], $this->operaciones[$target]] =
+            [$this->operaciones[$target], $this->operaciones[$index]];
+        $this->operaciones = array_values($this->operaciones);
+    }
+
+    // Getter reactivo: total de horas ingresadas
+    public function getTotalHorasProperty(): float
+    {
+        return collect($this->operaciones)->sum(fn($op) => (float) ($op['horas'] ?? 0));
+    }
+
+    // ── Guardado ──────────────────────────────────────────────────────
+
     public function guardarBorrador(): void
     {
         $this->guardando = true;
 
         DB::transaction(function () {
-            $datos = [
-                'rig'                              => $this->rig,
-                'pozo'                             => $this->pozo,
-                'municipio'                        => $this->municipio ?: null,
-                'operador'                         => $this->operador ?: null,
-                'fecha'                            => $this->fecha,
-                'dias_spud'                        => $this->dias_spud ?: null,
-                'prof_programada_ft'               => $this->prof_programada_ft ?: null,
-                'prof_ayer_ft'                     => $this->prof_ayer_ft ?: null,
-                'prof_hoy_ft'                      => $this->prof_hoy_ft ?: null,
-                'ft_perforados'                    => $this->ft_perforados ?: null,
-                'operacion_actual'                 => $this->operacion_actual ?: null,
-                'hrs_rotacion'                     => $this->hrs_rotacion ?: null,
-                'horas_acum_rotacion'              => $this->horas_acum_rotacion ?: null,
-                'prueba_preventoras_fecha'         => $this->prueba_preventoras_fecha ?: null,
-                'prueba_preventoras_comentarios'   => $this->prueba_preventoras_comentarios ?: null,
-                'creado_por'                       => Auth::id(),
-                'estado'                           => 'BORRADOR',
+            $datosReporte = [
+                'rig'                            => $this->rig,
+                'pozo'                           => $this->pozo,
+                'municipio'                      => $this->municipio ?: null,
+                'operador'                       => $this->operador ?: null,
+                'fecha'                          => $this->fecha,
+                'dias_spud'                      => $this->dias_spud ?: null,
+                'prof_programada_ft'             => $this->prof_programada_ft ?: null,
+                'prof_ayer_ft'                   => $this->prof_ayer_ft ?: null,
+                'prof_hoy_ft'                    => $this->prof_hoy_ft ?: null,
+                'ft_perforados'                  => $this->ft_perforados ?: null,
+                'operacion_actual'               => $this->operacion_actual ?: null,
+                'hrs_rotacion'                   => $this->hrs_rotacion ?: null,
+                'horas_acum_rotacion'            => $this->horas_acum_rotacion ?: null,
+                'prueba_preventoras_fecha'       => $this->prueba_preventoras_fecha ?: null,
+                'prueba_preventoras_comentarios' => $this->prueba_preventoras_comentarios ?: null,
+                'creado_por'                     => Auth::id(),
+                'estado'                         => 'BORRADOR',
             ];
 
             if ($this->reporteId) {
-                MorningReport::where('id', $this->reporteId)->update($datos);
+                MorningReport::where('id', $this->reporteId)->update($datosReporte);
             } else {
-                $reporte           = MorningReport::create($datos);
-                $this->reporteId   = $reporte->id;
-
-                // Actualizar URL sin recargar
+                $reporte         = MorningReport::create($datosReporte);
+                $this->reporteId = $reporte->id;
                 $this->dispatch('reporte-creado', id: $reporte->id);
             }
 
-            // Guardar personal
             PersonalReporte::updateOrCreate(
                 ['reporte_id' => $this->reporteId],
                 [
-                    'rig_manager'   => $this->p_rig_manager ?: null,
-                    'dsm'           => $this->p_dsm ?: null,
-                    'supervisor'    => $this->p_supervisor ?: null,
-                    'hseq'          => $this->p_hseq ?: null,
-                    'dias_sin_lti'  => $this->p_dias_sin_lti,
-                    'dias_sin_rwc'  => $this->p_dias_sin_rwc,
+                    'rig_manager'  => $this->p_rig_manager ?: null,
+                    'dsm'          => $this->p_dsm ?: null,
+                    'supervisor'   => $this->p_supervisor ?: null,
+                    'hseq'         => $this->p_hseq ?: null,
+                    'dias_sin_lti' => $this->p_dias_sin_lti,
+                    'dias_sin_rwc' => $this->p_dias_sin_rwc,
                 ]
             );
+
+            // Paso 2 — sincronizar operaciones
+            if ($this->paso >= 2) {
+                OperacionLog::where('reporte_id', $this->reporteId)->delete();
+                foreach ($this->operaciones as $i => $op) {
+                    if (empty($op['hora_desde']) && empty($op['descripcion'])) {
+                        continue;
+                    }
+                    OperacionLog::create([
+                        'reporte_id'  => $this->reporteId,
+                        'hora_desde'  => $op['hora_desde'] ?: null,
+                        'hora_hasta'  => $op['hora_hasta'] ?: null,
+                        'horas'       => $op['horas'] ?: null,
+                        'codigo'      => $op['codigo'] ?: null,
+                        'descripcion' => $op['descripcion'] ?: null,
+                        'turno'       => $op['turno'] ?: 'DIA',
+                        'noche_hrs'   => $op['noche_hrs'] ?: null,
+                        'dia_hrs'     => $op['dia_hrs'] ?: null,
+                        'orden'       => $i,
+                    ]);
+                }
+            }
         });
 
         $this->mensajeGuardado = 'Guardado ' . now()->format('H:i:s');
         $this->guardando = false;
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────
+    // ── Helpers privados ──────────────────────────────────────────────
 
     private function cargarPozos(): void
     {
@@ -215,33 +318,108 @@ class WizardReporte extends Component
         }
     }
 
+    private function calcularHorasFila(int $index): void
+    {
+        $desde = $this->operaciones[$index]['hora_desde'] ?? '';
+        $hasta = $this->operaciones[$index]['hora_hasta'] ?? '';
+
+        if (!$desde || !$hasta) {
+            return;
+        }
+
+        [$hD, $mD] = array_map('intval', explode(':', $desde));
+        [$hH, $mH] = array_map('intval', explode(':', $hasta));
+
+        $minutos = ($hH * 60 + $mH) - ($hD * 60 + $mD);
+
+        // Si cruza medianoche
+        if ($minutos < 0) {
+            $minutos += 1440;
+        }
+
+        $this->operaciones[$index]['horas'] = (string) round($minutos / 60, 2);
+        $this->distribuirHorasTurno($index);
+    }
+
+    private function autoDetectarTurno(int $index): void
+    {
+        $desde = $this->operaciones[$index]['hora_desde'] ?? '';
+        if (!$desde) {
+            return;
+        }
+        [$h] = array_map('intval', explode(':', $desde));
+        // NOCHE: 18:00 – 05:59 | DIA: 06:00 – 17:59
+        $this->operaciones[$index]['turno'] = ($h >= 18 || $h < 6) ? 'NOCHE' : 'DIA';
+        $this->distribuirHorasTurno($index);
+    }
+
+    private function distribuirHorasTurno(int $index): void
+    {
+        $horas = (float) ($this->operaciones[$index]['horas'] ?? 0);
+        $turno = $this->operaciones[$index]['turno'] ?? 'DIA';
+
+        $this->operaciones[$index]['noche_hrs'] = $turno === 'NOCHE' ? (string) $horas : '0';
+        $this->operaciones[$index]['dia_hrs']   = $turno === 'DIA'   ? (string) $horas : '0';
+    }
+
+    private function iniciarOperaciones(): void
+    {
+        // Empieza con 3 filas vacías
+        for ($i = 0; $i < 3; $i++) {
+            $this->operaciones[] = $this->filaVacia($i);
+        }
+    }
+
+    private function filaVacia(int $orden): array
+    {
+        return [
+            'hora_desde'  => '',
+            'hora_hasta'  => '',
+            'horas'       => '',
+            'codigo'      => '',
+            'descripcion' => '',
+            'turno'       => 'DIA',
+            'noche_hrs'   => '0',
+            'dia_hrs'     => '0',
+        ];
+    }
+
     private function validarPasoActual(): void
     {
         match ($this->paso) {
             1 => $this->validate($this->reglaPaso1(), $this->mensajesPaso1()),
+            2 => $this->validarTotalHoras(),
             default => null,
         };
     }
 
+    private function validarTotalHoras(): void
+    {
+        if ($this->getTotalHorasProperty() > 24) {
+            $this->addError('operaciones', 'El total de horas no puede superar 24h.');
+            throw new \Livewire\Exceptions\PropertyNotFoundException('Total de horas inválido');
+        }
+    }
+
     private function cargarReporte(): void
     {
-        $r = MorningReport::with('personal')->findOrFail($this->reporteId);
+        $r = MorningReport::with(['personal', 'operaciones'])->findOrFail($this->reporteId);
 
-        $this->rig                             = $r->rig ?? '';
-        $this->pozo                            = $r->pozo ?? '';
-        $this->municipio                       = $r->municipio ?? '';
-        $this->operador                        = $r->operador ?? '';
-        $this->fecha                           = $r->fecha?->format('Y-m-d') ?? now()->format('Y-m-d');
-        $this->dias_spud                       = $r->dias_spud;
-        $this->prof_programada_ft              = $r->prof_programada_ft;
-        $this->prof_ayer_ft                    = $r->prof_ayer_ft;
-        $this->prof_hoy_ft                     = $r->prof_hoy_ft;
-        $this->ft_perforados                   = $r->ft_perforados;
-        $this->operacion_actual                = $r->operacion_actual ?? '';
-        $this->hrs_rotacion                    = $r->hrs_rotacion;
-        $this->horas_acum_rotacion             = $r->horas_acum_rotacion;
-        $this->prueba_preventoras_fecha        = $r->prueba_preventoras_fecha?->format('Y-m-d') ?? '';
-        $this->prueba_preventoras_comentarios  = $r->prueba_preventoras_comentarios ?? '';
+        $this->rig                            = $r->rig ?? '';
+        $this->pozo                           = $r->pozo ?? '';
+        $this->municipio                      = $r->municipio ?? '';
+        $this->operador                       = $r->operador ?? '';
+        $this->fecha                          = $r->fecha?->format('Y-m-d') ?? now()->format('Y-m-d');
+        $this->dias_spud                      = $r->dias_spud;
+        $this->prof_programada_ft             = $r->prof_programada_ft;
+        $this->prof_ayer_ft                   = $r->prof_ayer_ft;
+        $this->prof_hoy_ft                    = $r->prof_hoy_ft;
+        $this->ft_perforados                  = $r->ft_perforados;
+        $this->operacion_actual               = $r->operacion_actual ?? '';
+        $this->hrs_rotacion                   = $r->hrs_rotacion;
+        $this->horas_acum_rotacion            = $r->horas_acum_rotacion;
+        $this->prueba_preventoras_fecha       = $r->prueba_preventoras_fecha?->format('Y-m-d') ?? '';
+        $this->prueba_preventoras_comentarios = $r->prueba_preventoras_comentarios ?? '';
 
         if ($r->personal) {
             $this->p_rig_manager  = $r->personal->rig_manager ?? '';
@@ -252,12 +430,28 @@ class WizardReporte extends Component
             $this->p_dias_sin_rwc = $r->personal->dias_sin_rwc ?? 0;
         }
 
+        if ($r->operaciones->isNotEmpty()) {
+            $this->operaciones = $r->operaciones->map(fn($op) => [
+                'hora_desde'  => $op->hora_desde ?? '',
+                'hora_hasta'  => $op->hora_hasta ?? '',
+                'horas'       => $op->horas ?? '',
+                'codigo'      => $op->codigo ?? '',
+                'descripcion' => $op->descripcion ?? '',
+                'turno'       => $op->turno ?? 'DIA',
+                'noche_hrs'   => $op->noche_hrs ?? '0',
+                'dia_hrs'     => $op->dia_hrs ?? '0',
+            ])->toArray();
+        }
+
         $this->cargarPozos();
     }
 
     // ── Render ────────────────────────────────────────────────────────
     public function render()
     {
-        return view('livewire.wizard-reporte');
+        return view('livewire.wizard-reporte', [
+            'codigos'     => self::CODIGOS,
+            'totalHoras'  => $this->getTotalHorasProperty(),
+        ]);
     }
 }

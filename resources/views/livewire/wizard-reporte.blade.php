@@ -72,7 +72,7 @@
     <div wire:loading.class="opacity-50 pointer-events-none" class="transition-opacity duration-200">
 
         @if($paso === 1) @include('livewire.wizard.paso1') @endif
-        @if($paso === 2) @include('livewire.wizard.paso2') @endif
+        @if($paso === 2) @include('livewire.wizard.paso2', ['codigos' => $codigos, 'totalHoras' => $totalHoras]) @endif
         @if($paso === 3) @include('livewire.wizard.paso3') @endif
         @if($paso === 4) @include('livewire.wizard.paso4') @endif
         @if($paso === 5) @include('livewire.wizard.paso5') @endif
