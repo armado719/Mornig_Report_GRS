@@ -280,7 +280,14 @@ class WizardReporte extends Component
 
     public function siguientePaso(): void
     {
-        $this->validarPasoActual();
+        $this->resetErrorBag();
+        $this->validarPasoActual(); // puede lanzar ValidationException (paso 1)
+
+        // Para validaciones manuales que usan addError() (paso 2+)
+        if ($this->getErrorBag()->isNotEmpty()) {
+            return;
+        }
+
         $this->guardarBorrador();
         $this->paso++;
     }
@@ -732,7 +739,6 @@ class WizardReporte extends Component
     {
         if ($this->getTotalHorasProperty() > 24) {
             $this->addError('operaciones', 'El total de horas no puede superar 24h.');
-            throw new \Livewire\Exceptions\PropertyNotFoundException('Total de horas inválido');
         }
     }
 

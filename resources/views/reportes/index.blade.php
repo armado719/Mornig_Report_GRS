@@ -1,3 +1,4 @@
+@use('Illuminate\Support\Str')
 <x-app-layout>
     <x-slot name="titulo">Reportes FGPO-002</x-slot>
 
