@@ -67,15 +67,15 @@
 
         {{-- Card de login — lado derecho --}}
         <div class="relative z-10 w-full max-w-sm mx-auto lg:mx-0 px-5 py-8 lg:mr-16 xl:mr-24 flex-shrink-0">
-            <div class="rounded-2xl shadow-2xl overflow-hidden"
-                 style="background:rgba(10,24,15,0.82); backdrop-filter:blur(20px); border:1px solid rgba(109,190,109,0.22);">
+            <div class="shadow-2xl overflow-hidden"
+                 style="border-radius:2rem; background:rgba(10,24,15,0.85); backdrop-filter:blur(20px); border:1px solid rgba(109,190,109,0.25);">
 
                 {{-- Franja verde superior --}}
-                <div class="h-1 w-full" style="background:linear-gradient(90deg,#2D7A4F,#6DBE6D,#2D7A4F);"></div>
+                <div class="w-full" style="height:3px; background:linear-gradient(90deg,#2D7A4F,#6DBE6D,#2D7A4F);"></div>
 
-                <div class="p-8">
+                <div class="px-10 py-10">
                     {{-- Logo y nombre --}}
-                    <div class="flex flex-col items-center mb-7">
+                    <div class="flex flex-col items-center mb-8">
                         @if(file_exists(public_path('images/grs-logo.png')))
                             <img src="/images/grs-logo.png" alt="GRS"
                                  class="w-20 h-20 rounded-full object-cover mb-4 shadow-xl"
@@ -99,7 +99,7 @@
                     {{ $slot }}
 
                     {{-- Footer --}}
-                    <p class="text-center text-xs mt-6" style="color:rgba(209,213,219,0.3);">
+                    <p class="text-center text-xs mt-8" style="color:rgba(209,213,219,0.3);">
                         Morning Report GRS © {{ date('Y') }}
                     </p>
                 </div>
