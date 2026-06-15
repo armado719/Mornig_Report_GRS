@@ -18,16 +18,11 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Instalar dependencias Node (caché de capas)
-COPY package.json package-lock.json ./
-RUN npm ci
-
-# Copiar la aplicación completa
+# Copiar la aplicación completa (incluye public/build pre-compilado)
 COPY . .
 
-# Post-install scripts y assets
+# Post-install scripts (assets ya vienen compilados del repo)
 RUN composer run-script post-autoload-dump 2>/dev/null || true
-RUN npm run build
 
 # Permisos Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
