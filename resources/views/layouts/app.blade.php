@@ -12,6 +12,43 @@
     <link rel="stylesheet" href="/build/assets/app-DvmndZ3c.css">
     <script type="module" src="/build/assets/app-DO2nEFzp.js" defer></script>
     @livewireStyles
+
+    <style>
+        .toast-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -7px;
+            left: 20px;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+        }
+        .toast-success::after { border-top: 7px solid rgba(45,122,79,0.9); }
+        .toast-error::after   { border-top: 7px solid rgba(185,28,28,0.9); }
+        .toast-warning::after { border-top: 7px solid rgba(180,83,9,0.9); }
+        .toast-info::after    { border-top: 7px solid rgba(30,64,175,0.9); }
+    </style>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('toasts', {
+                items: [],
+                add(type, message, duration = 4500) {
+                    const id = Date.now() + Math.random();
+                    this.items.push({ id, type, message, show: true });
+                    setTimeout(() => this.remove(id), duration);
+                },
+                remove(id) {
+                    const t = this.items.find(x => x.id === id);
+                    if (t) t.show = false;
+                    setTimeout(() => { this.items = this.items.filter(x => x.id !== id); }, 400);
+                }
+            });
+        });
+        window.addEventListener('toast', e => {
+            const d = e.detail[0] ?? e.detail;
+            Alpine.store('toasts').add(d.type ?? 'info', d.message ?? d);
+        });
+    </script>
 </head>
 <body class="h-full font-sans antialiased bg-grs-fondo text-grs-texto"
       x-data="{ sidebarOpen: window.innerWidth >= 1024 }">
@@ -212,25 +249,23 @@
                 </div>
             </header>
 
-            {{-- Flash message global --}}
+            {{-- Flash → Toast automático --}}
             @if(session('flash.banner'))
-            <div x-data="{ show: true }" x-show="show" x-transition
-                 class="flex-shrink-0 flex items-center justify-between gap-3 px-5 py-2.5 text-sm
-                        {{ session('flash.bannerStyle') === 'success'
-                            ? 'bg-grs-verde/15 border-b border-grs-verde/30 text-grs-verde'
-                            : 'bg-red-500/15 border-b border-red-500/30 text-red-400' }}">
-                <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    {{ session('flash.banner') }}
-                </div>
-                <button @click="show = false" class="opacity-60 hover:opacity-100 transition-opacity flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
+            <div x-data x-init="
+                $nextTick(() => $store.toasts.add(
+                    '{{ session('flash.bannerStyle') === 'success' ? 'success' : (session('flash.bannerStyle') === 'danger' ? 'error' : 'warning') }}',
+                    '{{ addslashes(session('flash.banner')) }}'
+                ))">
             </div>
+            @endif
+            @if(session('success'))
+            <div x-data x-init="$nextTick(() => $store.toasts.add('success', '{{ addslashes(session('success')) }}'))"></div>
+            @endif
+            @if(session('error'))
+            <div x-data x-init="$nextTick(() => $store.toasts.add('error', '{{ addslashes(session('error')) }}'))"></div>
+            @endif
+            @if(session('warning'))
+            <div x-data x-init="$nextTick(() => $store.toasts.add('warning', '{{ addslashes(session('warning')) }}'))"></div>
             @endif
 
             {{-- Contenido --}}
@@ -248,5 +283,49 @@
     </div>
 
     @livewireScripts
+
+    {{-- ===== TOAST CONTAINER ===== --}}
+    <div x-data class="fixed bottom-6 right-6 z-50 flex flex-col gap-2" style="min-width:300px; max-width:380px;">
+        <template x-for="toast in $store.toasts.items" :key="toast.id">
+            <div x-show="toast.show"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                 class="relative toast-bubble flex items-start gap-3 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium"
+                 :class="{
+                     'toast-success bg-grs-primario border border-grs-verde/50 text-grs-verde':   toast.type === 'success',
+                     'toast-error   bg-red-950     border border-red-500/50   text-red-300':      toast.type === 'error',
+                     'toast-warning bg-yellow-950  border border-yellow-500/50 text-yellow-300':  toast.type === 'warning',
+                     'toast-info    bg-blue-950    border border-blue-500/50  text-blue-300':     toast.type === 'info',
+                 }"
+                 style="backdrop-filter:blur(12px);">
+
+                {{-- Icono --}}
+                <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        x-bind:d="
+                            toast.type === 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' :
+                            toast.type === 'error'   ? 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' :
+                            toast.type === 'warning' ? 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' :
+                            'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                        "/>
+                </svg>
+
+                {{-- Mensaje --}}
+                <span class="flex-1 leading-relaxed" x-text="toast.message"></span>
+
+                {{-- Cerrar --}}
+                <button @click="$store.toasts.remove(toast.id)"
+                        class="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </template>
+    </div>
 </body>
 </html>
