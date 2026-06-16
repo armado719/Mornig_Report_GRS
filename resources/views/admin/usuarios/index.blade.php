@@ -67,10 +67,11 @@
                                     </svg>
                                 </a>
                                 @if($u->id !== auth()->id())
-                                <form method="POST" action="{{ route('admin.usuarios.destroy', $u->id) }}"
-                                      onsubmit="return confirm('¿Desactivar a {{ $u->nombre }}?')">
+                                <form method="POST" action="{{ route('admin.usuarios.destroy', $u->id) }}" id="form-user-{{ $u->id }}">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="p-1.5 rounded hover:bg-red-500/30 text-gray-400 hover:text-red-400 transition-colors" title="Desactivar">
+                                    <button type="button"
+                                            @click="$store.confirmModal.show('¿Desactivar a {{ addslashes($u->nombre) }}?', () => document.getElementById('form-user-{{ $u->id }}').submit())"
+                                            class="p-1.5 rounded hover:bg-red-500/30 text-gray-400 hover:text-red-400 transition-colors" title="Desactivar">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
                                         </svg>

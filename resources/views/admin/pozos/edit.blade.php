@@ -69,10 +69,10 @@
             {{-- Zona de eliminación --}}
             <div class="mt-6 pt-5 border-t border-gray-600">
                 <p class="text-xs text-gray-400 mb-3">Zona de peligro — esta acción desactiva el pozo.</p>
-                <form method="POST" action="{{ route('admin.pozos.destroy', $pozo->id) }}"
-                      onsubmit="return confirm('¿Desactivar el pozo «{{ $pozo->nombre }}»?')">
+                <form method="POST" action="{{ route('admin.pozos.destroy', $pozo->id) }}" id="form-pozo-edit">
                     @csrf @method('DELETE')
-                    <button type="submit"
+                    <button type="button"
+                            @click="$store.confirmModal.show('¿Desactivar el pozo «{{ addslashes($pozo->nombre) }}»?', () => document.getElementById('form-pozo-edit').submit())"
                         class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
                                bg-red-900/30 border border-red-700/50 text-red-400
                                hover:bg-red-800/50 hover:text-red-300 transition-colors">

@@ -57,10 +57,10 @@
             {{-- Zona de eliminación --}}
             <div class="mt-6 pt-5 border-t border-gray-600">
                 <p class="text-xs text-gray-400 mb-3">Zona de peligro — esta acción desactiva el RIG.</p>
-                <form method="POST" action="{{ route('admin.rigs.destroy', $rig->id) }}"
-                      onsubmit="return confirm('¿Desactivar RIG {{ $rig->numero }}?')">
+                <form method="POST" action="{{ route('admin.rigs.destroy', $rig->id) }}" id="form-rig-edit">
                     @csrf @method('DELETE')
-                    <button type="submit"
+                    <button type="button"
+                            @click="$store.confirmModal.show('¿Desactivar RIG {{ $rig->numero }}?', () => document.getElementById('form-rig-edit').submit())"
                         class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
                                bg-red-900/30 border border-red-700/50 text-red-400
                                hover:bg-red-800/50 hover:text-red-300 transition-colors">

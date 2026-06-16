@@ -26,6 +26,24 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
+            Alpine.store('confirmModal', {
+                open: false,
+                message: '',
+                _callback: null,
+                show(message, callback) {
+                    this.message = message;
+                    this._callback = callback;
+                    this.open = true;
+                },
+                confirm() {
+                    if (this._callback) this._callback();
+                    this.open = false;
+                },
+                cancel() {
+                    this.open = false;
+                }
+            });
+
             Alpine.store('toasts', {
                 items: [],
                 add(type, message, duration = 4500) {
@@ -279,6 +297,60 @@
     </div>
 
     @livewireScripts
+
+    {{-- ===== MODAL DE CONFIRMACIÓN ===== --}}
+    <div x-data
+         x-show="$store.confirmModal.open"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[60] flex items-center justify-center p-4"
+         style="display:none;">
+
+        {{-- Overlay --}}
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+             @click="$store.confirmModal.cancel()"></div>
+
+        {{-- Tarjeta --}}
+        <div x-show="$store.confirmModal.open"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-90"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-90"
+             class="relative w-full max-w-sm rounded-2xl border border-gray-600 shadow-2xl"
+             style="background:#1B4D35;">
+
+            {{-- Icono de advertencia --}}
+            <div class="flex flex-col items-center px-6 pt-7 pb-2">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                     style="background:rgba(239,68,68,0.15); border:2px solid rgba(239,68,68,0.4);">
+                    <svg class="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-white font-bold text-base mb-2">¿Confirmar acción?</h3>
+                <p class="text-gray-300 text-sm text-center leading-relaxed" x-text="$store.confirmModal.message"></p>
+            </div>
+
+            {{-- Botones --}}
+            <div class="flex gap-3 px-6 py-5">
+                <button @click="$store.confirmModal.cancel()"
+                        class="flex-1 py-2.5 rounded-xl border border-gray-500 text-gray-300 text-sm font-medium hover:bg-gray-700 transition-colors">
+                    Cancelar
+                </button>
+                <button @click="$store.confirmModal.confirm()"
+                        class="flex-1 py-2.5 rounded-xl text-white text-sm font-bold transition-colors"
+                        style="background:#ef4444;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
 
     {{-- ===== TOAST CONTAINER ===== --}}
     <div x-data class="fixed bottom-6 right-6 z-50 flex flex-col gap-3" style="min-width:320px; max-width:400px;">
