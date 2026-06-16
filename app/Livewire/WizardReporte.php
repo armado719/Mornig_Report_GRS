@@ -910,6 +910,10 @@ class WizardReporte extends Component
     // ── Render ────────────────────────────────────────────────────────
     public function render()
     {
+        // Recalcular siempre en render para garantizar sincronía
+        $this->calcularFtPerforados();
+        $this->calcularDiesel();
+
         return view('livewire.wizard-reporte', [
             'codigos'     => self::CODIGOS,
             'totalHoras'  => $this->getTotalHorasProperty(),

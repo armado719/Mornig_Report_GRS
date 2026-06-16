@@ -140,7 +140,7 @@
                 <input type="number" wire:model="ft_perforados"
                     step="0.01" placeholder="—"
                     inputmode="decimal"
-                    class="input-grs font-mono pr-8 {{ $ft_perforados !== null && $ft_perforados < 0 ? 'border-red-500' : 'bg-grs-primario/40' }}"
+                    class="input-grs font-mono pr-8 {{ $ft_perforados !== null && $ft_perforados < 0 ? 'border-red-500' : '' }}"
                     readonly/>
                 <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
             </div>
