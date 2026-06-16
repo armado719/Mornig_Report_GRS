@@ -19,6 +19,7 @@ class WizardReporte extends Component
     public ?int $reporteId = null;
     public bool $guardando = false;
     public string $mensajeGuardado = '';
+    public string $errorWizard = '';
 
     // ── Paso 1 — Encabezado ────────────────────────────────────────────
     public string $rig = '';
@@ -280,28 +281,26 @@ class WizardReporte extends Component
 
     public function siguientePaso(): void
     {
+        $this->errorWizard = '';
         $this->resetErrorBag();
 
         try {
             $this->validarPasoActual();
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->setErrorBag($e->validator->errors());
-            $this->dispatch('toast', type: 'error', message: 'Completa los campos requeridos antes de continuar.');
-            $this->js("(document.querySelector('main')||document.scrollingElement||document.documentElement).scrollTo({top:0,behavior:'smooth'})");
+            $this->errorWizard = implode(' • ', $e->validator->errors()->all());
             return;
         }
 
         if ($this->getErrorBag()->isNotEmpty()) {
-            $this->dispatch('toast', type: 'error', message: 'Completa los campos requeridos antes de continuar.');
-            $this->js("(document.querySelector('main')||document.scrollingElement||document.documentElement).scrollTo({top:0,behavior:'smooth'})");
+            $this->errorWizard = implode(' • ', $this->getErrorBag()->all());
             return;
         }
 
         try {
             $this->guardarBorrador();
-        } catch (\Exception $e) {
-            $this->addError('guardado', 'Error al guardar: ' . $e->getMessage());
-            $this->dispatch('toast', type: 'error', message: 'Error al guardar: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->errorWizard = 'Error al guardar: ' . $e->getMessage();
             return;
         }
 
