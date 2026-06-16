@@ -238,7 +238,7 @@
         </div>
 
         <div>
-            <label class="label-grs">DSM</label>
+            <label class="label-grs">Superintendente</label>
             <input type="text" wire:model="p_dsm"
                 placeholder="Nombre completo"
                 class="input-grs"/>
