@@ -149,7 +149,7 @@
                                class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
                                       {{ request()->routeIs('admin.rigs.*') ? 'text-grs-verde' : 'text-grs-texto hover:text-white' }}">
                                 <span class="w-1.5 h-1.5 rounded-full bg-current flex-shrink-0"></span>
-                                RIGs
+                                RIGS
                             </a>
                             <a href="{{ route('admin.pozos.index') }}"
                                class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors

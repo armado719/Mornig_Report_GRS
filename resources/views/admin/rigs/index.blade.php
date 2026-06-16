@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="titulo">Administrar RIGs</x-slot>
+    <x-slot name="titulo">Administrar RIGS</x-slot>
 
     @if(session('flash.banner'))
     <div class="mb-4 px-4 py-3 rounded-lg text-sm flex items-center gap-2
@@ -14,7 +14,7 @@
     <div class="card-grs max-w-2xl">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h2 class="text-white font-semibold text-lg">RIGs</h2>
+                <h2 class="text-white font-semibold text-lg">RIGS</h2>
                 <p class="text-grs-texto text-xs mt-0.5">{{ $rigs->total() }} RIG(s) registrado(s)</p>
             </div>
             <a href="{{ route('admin.rigs.create') }}" class="btn-grs flex items-center gap-2 text-sm">
@@ -43,9 +43,9 @@
                     @else
                         <span class="badge-borrador">Inactivo</span>
                     @endif
-                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="flex gap-1">
                         <a href="{{ route('admin.rigs.edit', $rig->id) }}"
-                           class="p-1.5 rounded hover:bg-grs-acento text-grs-texto hover:text-white transition-colors">
+                           class="p-1.5 rounded hover:bg-grs-acento text-gray-400 hover:text-white transition-colors">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -53,7 +53,7 @@
                         <form method="POST" action="{{ route('admin.rigs.destroy', $rig->id) }}"
                               onsubmit="return confirm('¿Desactivar RIG {{ $rig->numero }}?')">
                             @csrf @method('DELETE')
-                            <button type="submit" class="p-1.5 rounded hover:bg-red-500/30 text-grs-texto hover:text-red-400 transition-colors">
+                            <button type="submit" class="p-1.5 rounded hover:bg-red-500/30 text-gray-400 hover:text-red-400 transition-colors">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
                                 </svg>
@@ -63,7 +63,7 @@
                 </div>
             </div>
             @empty
-            <div class="text-center py-8 text-grs-texto text-sm">No hay RIGs registrados.</div>
+            <div class="text-center py-8 text-grs-texto text-sm">No hay RIGS registrados.</div>
             @endforelse
         </div>
 
