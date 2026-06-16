@@ -111,7 +111,7 @@
                     step="0.01" min="0" placeholder="0.00"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8"/>
-                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">ft</span>
             </div>
         </div>
 
@@ -124,7 +124,7 @@
                     step="0.01" min="0" placeholder="0.00"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8"/>
-                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">ft</span>
             </div>
         </div>
 
@@ -137,7 +137,7 @@
                     step="0.01" min="0" placeholder="0.00"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8"/>
-                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">ft</span>
             </div>
         </div>
 
@@ -153,7 +153,7 @@
                     inputmode="decimal"
                     class="input-grs font-mono pr-8"
                     readonly/>
-                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">ft</span>
             </div>
             <p x-show="ftPerf !== '' && parseFloat(ftPerf) < 0"
                class="mt-1 text-xs text-red-400">Prof. Hoy menor que Prof. Ayer</p>
@@ -182,7 +182,7 @@
                     step="0.01" min="0" max="24" placeholder="0.00"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8 {{ $errors->has('hrs_rotacion') ? 'border-red-500' : '' }}"/>
-                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">h</span>
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">h</span>
             </div>
             @error('hrs_rotacion') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
         </div>
@@ -195,7 +195,7 @@
                     step="0.01" min="0" placeholder="0.00"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8"/>
-                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">h</span>
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">h</span>
             </div>
         </div>
 
@@ -261,7 +261,7 @@
     </div>
 
     {{-- Indicadores HSEQ ── --}}
-    <div class="border-t border-grs-borde pt-4">
+    <div class="border-t border-gray-600 pt-4">
         <p class="text-xs font-bold uppercase tracking-widest text-grs-verde mb-3">Indicadores HSEQ</p>
         <div class="flex flex-wrap gap-6">
 

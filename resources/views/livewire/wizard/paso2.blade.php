@@ -40,7 +40,7 @@
     </div>
 
     <div class="flex-1 max-w-xs hidden lg:block">
-        <div class="h-2 bg-grs-borde rounded-full overflow-hidden">
+        <div class="h-2 bg-gray-600 rounded-full overflow-hidden">
             <div class="h-full rounded-full transition-all duration-300
                 {{ $totalHoras > 24 ? 'bg-red-500' : 'bg-grs-verde' }}"
                 style="width: {{ min(($totalHoras / 24) * 100, 100) }}%"></div>
@@ -92,7 +92,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
                         </svg>
                     </button>
-                    <span class="text-[10px] text-gray-600 font-mono">{{ $i + 1 }}</span>
+                    <span class="text-[10px] text-gray-400 font-mono">{{ $i + 1 }}</span>
                     <button wire:click="moverFila({{ $i }}, 'down')"
                         class="text-gray-700 hover:text-grs-verde transition-colors {{ $i === count($operaciones) - 1 ? 'invisible' : '' }}">
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,7 +149,7 @@
 
                 <div class="flex justify-center">
                     <button wire:click="removeOperacion({{ $i }})"
-                        class="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400
+                        class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400
                                transition-all p-1 rounded">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -166,7 +166,7 @@
                         Actividad #{{ $i + 1 }}
                     </span>
                     <button wire:click="removeOperacion({{ $i }})"
-                        class="text-gray-600 hover:text-red-400 transition-colors">
+                        class="text-gray-400 hover:text-red-400 transition-colors">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>

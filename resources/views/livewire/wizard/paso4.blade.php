@@ -54,7 +54,7 @@
                         step="0.01" min="0" placeholder="0.00"
                         inputmode="decimal"
                         class="input-grs font-mono text-center pr-8"/>
-                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">ft</span>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
             @endphp
 
             @foreach($camposTD as $c)
-            <div class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg bg-grs-fondo/40 border border-grs-borde">
+            <div class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg bg-grs-fondo/40 border border-gray-600">
                 <label class="text-sm font-medium text-grs-texto">{{ $c['label'] }}</label>
                 <div class="flex items-center gap-2">
                     <input type="number"
@@ -89,14 +89,14 @@
                         step="0.01" min="0" placeholder="0.00"
                         inputmode="decimal"
                         class="input-grs font-mono text-right text-sm w-28"/>
-                    <span class="text-xs text-gray-600 w-4">{{ $c['unit'] }}</span>
+                    <span class="text-xs text-gray-400 w-4">{{ $c['unit'] }}</span>
                 </div>
             </div>
             @endforeach
 
             {{-- Resumen visual --}}
             @if($td_hrs_rotacion || $td_hrs_unidad)
-            <div class="pt-2 border-t border-grs-borde">
+            <div class="pt-2 border-t border-gray-600">
                 @php
                     $rotPct = $td_hrs_unidad > 0
                         ? min(100, (float)$td_hrs_rotacion / (float)$td_hrs_unidad * 100)
@@ -106,7 +106,7 @@
                     <span>Eficiencia rotación</span>
                     <span class="font-mono font-bold text-grs-verde">{{ number_format($rotPct, 1) }}%</span>
                 </div>
-                <div class="h-1.5 bg-grs-borde rounded-full overflow-hidden">
+                <div class="h-1.5 bg-gray-600 rounded-full overflow-hidden">
                     <div class="h-full bg-grs-verde rounded-full transition-all duration-500"
                          style="width: {{ $rotPct }}%"></div>
                 </div>
@@ -181,7 +181,7 @@
             </div>
             <div class="flex justify-center">
                 <button wire:click="removeInventario({{ $i }})"
-                    class="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400
+                    class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400
                            transition-all p-1 rounded">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -218,7 +218,7 @@
     </div>
 
     @forelse($equipos as $i => $eq)
-    <div class="mb-3 p-3 rounded-lg bg-grs-fondo/40 border border-grs-borde group"
+    <div class="mb-3 p-3 rounded-lg bg-grs-fondo/40 border border-gray-600 group"
          wire:key="eq-{{ $i }}">
 
         <div class="flex items-center justify-between mb-2">
@@ -226,7 +226,7 @@
                 Equipo {{ $i + 1 }}
             </span>
             <button wire:click="removeEquipo({{ $i }})"
-                class="text-gray-600 hover:text-red-400 transition-colors">
+                class="text-gray-400 hover:text-red-400 transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>

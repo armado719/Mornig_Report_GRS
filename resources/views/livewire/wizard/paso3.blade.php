@@ -55,7 +55,7 @@
         @foreach($camposLodo as $c)
         <div>
             <label class="label-grs">{{ $c['label'] }}
-                @if($c['unit'])<span class="text-[9px] normal-case text-gray-600">{{ $c['unit'] }}</span>@endif
+                @if($c['unit'])<span class="text-[9px] normal-case text-gray-400">{{ $c['unit'] }}</span>@endif
             </label>
             <input type="number"
                 wire:model="{{ $c['key'] }}"
@@ -71,7 +71,7 @@
 
     {{-- Arena por separado --}}
     <div class="mt-3 max-w-xs">
-        <label class="label-grs">Arena <span class="text-[9px] normal-case text-gray-600">%</span></label>
+        <label class="label-grs">Arena <span class="text-[9px] normal-case text-gray-400">%</span></label>
         <input type="number" wire:model="l_arena"
             step="0.01" min="0" placeholder="0.00"
             inputmode="decimal"
@@ -102,7 +102,7 @@
     <div class="space-y-2">
         @foreach($bombas as $i => $bomba)
         <div class="grid grid-cols-1 sm:grid-cols-[8rem_8rem_1fr_6rem_5rem_7rem] gap-2 items-center
-                    p-2 rounded-lg bg-grs-fondo/40 border border-grs-borde"
+                    p-2 rounded-lg bg-grs-fondo/40 border border-gray-600"
              wire:key="bomba-{{ $i }}">
 
             {{-- Etiqueta bomba en mobile --}}
@@ -182,7 +182,7 @@
                         step="0.01" min="0" placeholder="0.00"
                         inputmode="decimal"
                         class="input-grs font-mono pr-7"/>
-                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">TM</span>
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">TM</span>
                 </div>
             </div>
             <div>
@@ -192,7 +192,7 @@
                         step="0.01" min="0" placeholder="0.00"
                         inputmode="decimal"
                         class="input-grs font-mono pr-7"/>
-                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">TM</span>
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">TM</span>
                 </div>
             </div>
             <div class="col-span-2">
@@ -202,7 +202,7 @@
                         step="0.01" min="0" placeholder="0.00"
                         inputmode="decimal"
                         class="input-grs font-mono pr-7"/>
-                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">ft</span>
                 </div>
             </div>
             <div class="col-span-2">
@@ -222,7 +222,7 @@
                     d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
             Diesel
-            <span class="text-[9px] normal-case font-normal text-gray-600 ml-1">(galones)</span>
+            <span class="text-[9px] normal-case font-normal text-gray-400 ml-1">(galones)</span>
         </h3>
 
         <div class="space-y-2">
@@ -237,7 +237,7 @@
             @endphp
 
             @foreach($camposDiesel as $c)
-            <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-grs-borde/50">
+            <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-gray-600">
                 <label class="text-xs font-medium text-grs-texto flex-shrink-0 w-36">
                     {{ $c['label'] }}
                     @if($c['readonly'])
@@ -259,14 +259,14 @@
                             inputmode="decimal"
                             class="input-grs font-mono text-right text-sm w-32"/>
                     @endif
-                    <span class="text-xs text-gray-600 w-6">gal</span>
+                    <span class="text-xs text-gray-400 w-6">gal</span>
                 </div>
             </div>
             @endforeach
 
             {{-- Indicador visual diesel --}}
             @if($d_ayer && $d_hoy)
-            <div class="mt-3 pt-3 border-t border-grs-borde">
+            <div class="mt-3 pt-3 border-t border-gray-600">
                 @php $pct = $d_ayer > 0 ? min(100, (float)$d_hoy / (float)$d_ayer * 100) : 0; @endphp
                 <div class="flex justify-between text-xs text-grs-texto mb-1">
                     <span>Nivel actual vs ayer</span>
@@ -274,7 +274,7 @@
                         {{ number_format($pct, 1) }}%
                     </span>
                 </div>
-                <div class="h-2 bg-grs-borde rounded-full overflow-hidden">
+                <div class="h-2 bg-gray-600 rounded-full overflow-hidden">
                     <div class="h-full rounded-full transition-all duration-500
                         {{ $pct < 25 ? 'bg-red-500' : ($pct < 50 ? 'bg-yellow-500' : 'bg-grs-verde') }}"
                         style="width: {{ $pct }}%">

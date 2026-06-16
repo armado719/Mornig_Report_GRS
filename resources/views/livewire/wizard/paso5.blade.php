@@ -57,7 +57,7 @@
             {{-- Etiqueta --}}
             <div class="flex items-center justify-between sm:block">
                 <span class="text-sm font-medium text-grs-texto">{{ $p['label'] }}</span>
-                <span class="text-[10px] text-gray-600 sm:ml-1.5">{{ $p['unit'] }}</span>
+                <span class="text-[10px] text-gray-400 sm:ml-1.5">{{ $p['unit'] }}</span>
             </div>
 
             {{-- NOCHE --}}
@@ -122,10 +122,10 @@
 
         <div class="space-y-2">
             @foreach($tuberias as $t)
-            <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-grs-fondo/40 border border-grs-borde">
+            <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-grs-fondo/40 border border-gray-600">
                 <div>
                     <span class="text-sm font-mono font-bold text-grs-verde">{{ $t['label'] }}</span>
-                    <span class="text-[10px] text-gray-600 ml-1.5">{{ $t['desc'] }}</span>
+                    <span class="text-[10px] text-gray-400 ml-1.5">{{ $t['desc'] }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <input type="number"
@@ -133,13 +133,13 @@
                         step="0.01" min="0" placeholder="0.00"
                         inputmode="decimal"
                         class="input-grs font-mono text-right text-sm w-24"/>
-                    <span class="text-xs text-gray-600 w-3">h</span>
+                    <span class="text-xs text-gray-400 w-3">h</span>
                 </div>
             </div>
             @endforeach
 
             @if($totalHrsTub > 0)
-            <div class="pt-2 border-t border-grs-borde flex items-center justify-between px-1">
+            <div class="pt-2 border-t border-gray-600 flex items-center justify-between px-1">
                 <span class="text-xs text-grs-texto">Total</span>
                 <span class="font-mono font-bold text-grs-verde text-sm">{{ number_format($totalHrsTub, 2) }} h</span>
             </div>
@@ -167,16 +167,16 @@
             @endphp
 
             @foreach($personalItems as $pi)
-            <div class="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-grs-fondo/40 border border-grs-borde">
+            <div class="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-grs-fondo/40 border border-gray-600">
                 <label class="text-sm font-medium {{ $pi['color'] }}">{{ $pi['label'] }}</label>
                 <div class="flex items-center gap-3">
                     <button type="button"
                         wire:click="$set('{{ $pi['key'] }}', max(0, {{ $this->{$pi['key']} }} - 1))"
-                        class="w-7 h-7 rounded-full bg-grs-borde hover:bg-grs-acento text-white flex items-center justify-center transition-colors text-sm font-bold leading-none">−</button>
+                        class="w-7 h-7 rounded-full bg-gray-600 hover:bg-grs-acento text-white flex items-center justify-center transition-colors text-sm font-bold leading-none">−</button>
                     <span class="font-mono font-bold text-lg {{ $pi['color'] }} w-8 text-center">{{ $this->{$pi['key']} }}</span>
                     <button type="button"
                         wire:click="$set('{{ $pi['key'] }}', {{ $this->{$pi['key']} }} + 1)"
-                        class="w-7 h-7 rounded-full bg-grs-borde hover:bg-grs-acento text-white flex items-center justify-center transition-colors text-sm font-bold leading-none">+</button>
+                        class="w-7 h-7 rounded-full bg-gray-600 hover:bg-grs-acento text-white flex items-center justify-center transition-colors text-sm font-bold leading-none">+</button>
                 </div>
             </div>
             @endforeach
@@ -242,33 +242,33 @@
     </h3>
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-grs-borde">
-            <div class="text-xs text-gray-600 mb-1">RIG / Fecha</div>
+        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-gray-600">
+            <div class="text-xs text-gray-400 mb-1">RIG / Fecha</div>
             <div class="font-mono font-bold text-grs-verde text-sm">RIG {{ $rig }}</div>
             <div class="text-xs text-grs-texto">{{ $fecha }}</div>
         </div>
-        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-grs-borde">
-            <div class="text-xs text-gray-600 mb-1">Ft. Perforados</div>
+        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-gray-600">
+            <div class="text-xs text-gray-400 mb-1">Ft. Perforados</div>
             <div class="font-mono font-bold text-grs-verde text-xl">{{ $ft_perforados ?? '—' }}</div>
-            <div class="text-xs text-gray-600">ft</div>
+            <div class="text-xs text-gray-400">ft</div>
         </div>
-        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-grs-borde">
-            <div class="text-xs text-gray-600 mb-1">Actividades</div>
+        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-gray-600">
+            <div class="text-xs text-gray-400 mb-1">Actividades</div>
             <div class="font-mono font-bold text-grs-verde text-xl">
                 {{ count(array_filter($operaciones, fn($op) => !empty($op['descripcion']))) }}
             </div>
-            <div class="text-xs text-gray-600">registradas</div>
+            <div class="text-xs text-gray-400">registradas</div>
         </div>
-        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-grs-borde">
-            <div class="text-xs text-gray-600 mb-1">Personal Total</div>
+        <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-gray-600">
+            <div class="text-xs text-gray-400 mb-1">Personal Total</div>
             <div class="font-mono font-bold text-grs-verde text-xl">
                 {{ $personal_grs + $personal_ecopetrol + $personal_flotantes }}
             </div>
-            <div class="text-xs text-gray-600">personas</div>
+            <div class="text-xs text-gray-400">personas</div>
         </div>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-grs-borde">
+    <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-600">
         <div class="flex items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></div>
             <span class="text-xs text-grs-texto">
