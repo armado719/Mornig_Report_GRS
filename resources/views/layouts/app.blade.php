@@ -120,7 +120,7 @@
                 {{-- Admin (solo ADMIN) --}}
                 @role('ADMIN')
                 <div class="pt-3">
-                    <p class="px-3 mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-600">Administración</p>
+                    <p class="px-3 mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-300">Administración</p>
 
                     <div x-data="{ open: {{ request()->routeIs('admin.*') ? 'true' : 'false' }} }">
                         <button @click="open = !open"
@@ -184,7 +184,7 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                            class="text-gray-600 hover:text-red-400 transition-colors"
+                            class="text-gray-400 hover:text-red-400 transition-colors"
                             title="Cerrar sesión">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
