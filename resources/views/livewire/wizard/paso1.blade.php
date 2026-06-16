@@ -137,7 +137,8 @@
                 <span class="text-[9px] text-grs-verde normal-case">(auto)</span>
             </label>
             <div class="relative">
-                <input type="number" wire:model="ft_perforados"
+                <input type="number"
+                    value="{{ $ft_perforados ?? '' }}"
                     step="0.01" placeholder="—"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8 {{ $ft_perforados !== null && $ft_perforados < 0 ? 'border-red-500' : '' }}"

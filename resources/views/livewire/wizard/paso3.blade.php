@@ -245,12 +245,20 @@
                     @endif
                 </label>
                 <div class="flex items-center gap-2 flex-1 justify-end">
-                    <input type="number"
-                        wire:model{{ $c['readonly'] ? '' : '.live' }}="{{ $c['key'] }}"
-                        step="0.01" min="0" placeholder="0.00"
-                        inputmode="decimal"
-                        {{ $c['readonly'] ? 'readonly' : '' }}
-                        class="input-grs font-mono text-right text-sm w-32"/>
+                    @if($c['readonly'])
+                        <input type="number"
+                            value="{{ $this->{$c['key']} ?? '' }}"
+                            step="0.01" placeholder="0.00"
+                            inputmode="decimal"
+                            readonly
+                            class="input-grs font-mono text-right text-sm w-32"/>
+                    @else
+                        <input type="number"
+                            wire:model.live="{{ $c['key'] }}"
+                            step="0.01" min="0" placeholder="0.00"
+                            inputmode="decimal"
+                            class="input-grs font-mono text-right text-sm w-32"/>
+                    @endif
                     <span class="text-xs text-gray-600 w-6">gal</span>
                 </div>
             </div>
