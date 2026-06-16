@@ -64,7 +64,7 @@
 
             {{-- Logo --}}
             <div class="flex flex-col items-center gap-2 px-5 py-5 border-b border-grs-borde flex-shrink-0">
-                <x-grs-logo size="lg"/>
+                <x-grs-logo size="xl"/>
                 <div class="flex flex-col items-center leading-tight">
                     <span class="text-white font-bold text-sm tracking-wide">Morning Report</span>
                     <span class="text-grs-texto text-[10px] uppercase tracking-widest">Operaciones</span>
