@@ -97,6 +97,22 @@
 
     </div>
 
+    {{-- ── Error inline debajo del formulario ── --}}
+    @if($errors->any())
+    <div class="mt-4 flex items-start gap-3 p-4 rounded-xl border border-red-500/60 bg-red-900/30">
+        <svg class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div>
+            <p class="text-sm font-bold text-red-400 mb-1">Corrige los siguientes errores:</p>
+            <ul class="text-xs text-red-300 space-y-0.5">
+                @foreach($errors->all() as $error)<li>• {{ $error }}</li>@endforeach
+            </ul>
+        </div>
+    </div>
+    @endif
+
     {{-- ── Navegación inferior ── --}}
     <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-600">
 

@@ -284,15 +284,16 @@ class WizardReporte extends Component
 
         try {
             $this->validarPasoActual();
-        } catch (\Illuminate\Validation\ValidationException) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->setErrorBag($e->validator->errors());
             $this->dispatch('toast', type: 'error', message: 'Completa los campos requeridos antes de continuar.');
-            $this->js("window.scrollTo({top:0,behavior:'smooth'})");
+            $this->js("(document.querySelector('main')||document.scrollingElement||document.documentElement).scrollTo({top:0,behavior:'smooth'})");
             return;
         }
 
         if ($this->getErrorBag()->isNotEmpty()) {
             $this->dispatch('toast', type: 'error', message: 'Completa los campos requeridos antes de continuar.');
-            $this->js("window.scrollTo({top:0,behavior:'smooth'})");
+            $this->js("(document.querySelector('main')||document.scrollingElement||document.documentElement).scrollTo({top:0,behavior:'smooth'})");
             return;
         }
 
@@ -301,7 +302,6 @@ class WizardReporte extends Component
         } catch (\Exception $e) {
             $this->addError('guardado', 'Error al guardar: ' . $e->getMessage());
             $this->dispatch('toast', type: 'error', message: 'Error al guardar: ' . $e->getMessage());
-            $this->js("window.scrollTo({top:0,behavior:'smooth'})");
             return;
         }
 
