@@ -1,13 +1,39 @@
 <x-app-layout>
     <x-slot name="titulo">Dashboard — RIG {{ auth()->user()->rig ?? 'Todos' }}</x-slot>
 
-    <div class="mb-5">
-        <h2 class="text-xl font-bold text-white">
-            Buen día, {{ explode(' ', auth()->user()->nombre)[0] }}
-        </h2>
-        <p class="text-grs-texto text-sm mt-0.5">
-            {{ now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}
-        </p>
+    {{-- Hero Banner --}}
+    <div class="relative -mx-4 lg:-mx-6 -mt-4 lg:-mt-6 mb-6 overflow-hidden" style="height:280px;">
+        @if(file_exists(public_path('images/rig-hero.jpg')))
+        <div class="absolute inset-0 bg-cover bg-center"
+             style="background-image:url('/images/rig-hero.jpg'); background-position:center 40%;"></div>
+        @else
+        <div class="absolute inset-0" style="background:linear-gradient(135deg,#061209,#1B4D35);"></div>
+        @endif
+
+        {{-- Overlay gradiente --}}
+        <div class="absolute inset-0"
+             style="background:linear-gradient(to bottom, rgba(6,18,9,0.15) 0%, rgba(6,18,9,0.45) 55%, rgba(6,18,9,0.93) 100%);"></div>
+
+        {{-- Contenido inferior --}}
+        <div class="absolute inset-0 flex flex-col justify-end px-6 lg:px-8 pb-7">
+            <p class="text-grs-verde text-xs font-bold uppercase tracking-widest mb-2">
+                {{ now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}
+            </p>
+            <h2 class="text-3xl lg:text-4xl font-black text-white mb-1"
+                style="text-shadow:0 2px 16px rgba(0,0,0,0.9);">
+                Buen día, {{ explode(' ', auth()->user()->nombre)[0] }}
+            </h2>
+            <div class="flex items-center gap-3 mt-0.5">
+                <p class="text-grs-verde text-sm font-semibold">Morning Report · FGPO-002</p>
+                @if(auth()->user()->rig)
+                    <span class="text-white/40 text-xs">·</span>
+                    <p class="text-sm text-white/60">RIG {{ auth()->user()->rig }}</p>
+                @endif
+            </div>
+        </div>
+
+        {{-- Línea verde inferior --}}
+        <div class="absolute bottom-0 left-0 right-0" style="height:1px; background:linear-gradient(90deg,transparent,rgba(109,190,109,0.5),transparent);"></div>
     </div>
 
     {{-- KPIs --}}

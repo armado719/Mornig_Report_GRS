@@ -234,8 +234,14 @@
             @endif
 
             {{-- Contenido --}}
-            <main class="flex-1 overflow-y-auto p-4 lg:p-6">
-                {{ $slot }}
+            <main class="flex-1 overflow-y-auto p-4 lg:p-6 relative">
+                @if(file_exists(public_path('images/rig-bg.jpg')))
+                <div class="absolute inset-0 bg-cover bg-center pointer-events-none"
+                     style="background-image:url('/images/rig-bg.jpg'); background-position:center 30%; opacity:0.07;"></div>
+                @endif
+                <div class="relative z-10">
+                    {{ $slot }}
+                </div>
             </main>
 
         </div>
