@@ -84,17 +84,12 @@
 </div>
 
 {{-- ── SECCIÓN: Profundidades ── --}}
-<div class="card-grs mb-4"
-     x-data="{
-         profAyer: $wire.entangle('prof_ayer_ft'),
-         profHoy:  $wire.entangle('prof_hoy_ft'),
-         ftVal: null
-     }"
-     x-effect="
-         const a = parseFloat(profAyer);
-         const h = parseFloat(profHoy);
-         ftVal = (!isNaN(a) && !isNaN(h)) ? (h - a) : null;
-     ">
+@php
+    function calcFtJs() {
+        return "const a=parseFloat(\$refs.profAyer.value),h=parseFloat(\$refs.profHoy.value),r=\$refs.ftPerf;if(!isNaN(a)&&!isNaN(h)){r.value=(h-a).toFixed(2);r.classList.toggle('border-red-500',(h-a)<0);}else{r.value='';}";
+    }
+@endphp
+<div class="card-grs mb-4" x-data>
     <h3 class="seccion-titulo">
         <svg class="w-4 h-4 inline mr-1.5 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -122,6 +117,8 @@
             <label class="label-grs">Prof. Ayer</label>
             <div class="relative">
                 <input type="number" wire:model.live="prof_ayer_ft"
+                    x-ref="profAyer"
+                    @input="{{ calcFtJs() }}"
                     step="0.01" min="0" placeholder="0.00"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8"/>
@@ -134,6 +131,8 @@
             <label class="label-grs">Prof. Hoy</label>
             <div class="relative">
                 <input type="number" wire:model.live="prof_hoy_ft"
+                    x-ref="profHoy"
+                    @input="{{ calcFtJs() }}"
                     step="0.01" min="0" placeholder="0.00"
                     inputmode="decimal"
                     class="input-grs font-mono pr-8"/>
@@ -141,23 +140,24 @@
             </div>
         </div>
 
-        {{-- Ft Perforados (calculado Alpine) --}}
+        {{-- Ft Perforados (calculado vía evento input directo) --}}
         <div>
             <label class="label-grs">Ft Perforados
                 <span class="text-[9px] text-grs-verde normal-case">(auto)</span>
             </label>
             <div class="relative">
                 <input type="number"
-                    :value="ftVal !== null ? ftVal.toFixed(2) : ''"
+                    x-ref="ftPerf"
+                    value="{{ $ft_perforados ?? '' }}"
                     placeholder="—"
                     inputmode="decimal"
-                    :class="ftVal !== null && ftVal < 0 ? 'border-red-500' : ''"
                     class="input-grs font-mono pr-8"
                     readonly/>
                 <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">ft</span>
             </div>
-            <p x-show="ftVal !== null && ftVal < 0"
-               class="mt-1 text-xs text-red-400">Prof. Hoy menor que Prof. Ayer</p>
+            @if($ft_perforados !== null && $ft_perforados < 0)
+                <p class="mt-1 text-xs text-red-400">Prof. Hoy menor que Prof. Ayer</p>
+            @endif
         </div>
 
     </div>
