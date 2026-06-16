@@ -53,14 +53,14 @@
         <div>
             <label class="label-grs">Municipio</label>
             <input type="text" wire:model="municipio" placeholder="Auto desde pozo"
-                class="input-grs bg-grs-primario/40"/>
+                class="input-grs"/>
         </div>
 
         {{-- Operador (auto) --}}
         <div>
             <label class="label-grs">Operador</label>
             <input type="text" wire:model="operador" placeholder="Auto desde pozo"
-                class="input-grs bg-grs-primario/40"/>
+                class="input-grs"/>
         </div>
 
         {{-- Días desde Spud --}}
