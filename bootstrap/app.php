@@ -12,6 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust Render.com's load balancer proxy so HTTPS is detected correctly
+        $middleware->trustProxies(at: '*');
+
         // Alias de Spatie Permission para usar en rutas
         $middleware->alias([
             'role'       => \Spatie\Permission\Middleware\RoleMiddleware::class,
