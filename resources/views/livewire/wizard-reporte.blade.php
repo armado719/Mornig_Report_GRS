@@ -29,9 +29,9 @@
 
                     {{-- Círculo --}}
                     <div class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border-2
-                        {{ $paso > $num  ? 'bg-grs-verde border-grs-verde text-grs-fondo' : '' }}
+                        {{ $paso > $num  ? 'bg-grs-verde border-grs-verde text-white' : '' }}
                         {{ $paso === $num ? 'bg-grs-fondo border-grs-verde text-grs-verde' : '' }}
-                        {{ $paso < $num  ? 'bg-transparent border-grs-borde text-gray-600 group-hover:border-grs-acento' : '' }}">
+                        {{ $paso < $num  ? 'bg-grs-fondo/60 border-gray-400 text-gray-300 group-hover:border-grs-verde group-hover:text-grs-verde' : '' }}">
 
                         @if($paso > $num)
                             {{-- Check completado --}}
@@ -45,7 +45,7 @@
 
                     {{-- Etiqueta --}}
                     <span class="text-[10px] font-medium hidden sm:block
-                        {{ $paso === $num ? 'text-grs-verde' : ($paso > $num ? 'text-grs-texto' : 'text-gray-600') }}">
+                        {{ $paso === $num ? 'text-grs-verde' : ($paso > $num ? 'text-white' : 'text-gray-300') }}">
                         {{ $info['label'] }}
                     </span>
                 </button>
