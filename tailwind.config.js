@@ -21,7 +21,7 @@ export default {
                     fondo:    '#0D1F17',
                     primario: '#1B4D35',
                     acento:   '#2D7A4F',
-                    verde:    '#6DBE6D',
+                    verde:    '#4A9460',
                     borde:    '#2D4A3E',
                     texto:    '#D1D5DB',
                 },
