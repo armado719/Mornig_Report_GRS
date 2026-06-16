@@ -299,61 +299,55 @@
     @livewireScripts
 
     {{-- ===== MODAL DE CONFIRMACIÓN ===== --}}
-    <template x-teleport="body">
-        <div x-data
-             x-show="$store.confirmModal.open"
+    <div x-data x-show="$store.confirmModal.open"
+         style="display:none; position:fixed; inset:0; z-index:9999;">
+
+        {{-- Overlay oscuro --}}
+        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px);"
+             @click="$store.confirmModal.cancel()"></div>
+
+        {{-- Tarjeta centrada --}}
+        <div x-show="$store.confirmModal.open"
              x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
+             x-transition:enter-start="opacity-0 scale-90"
+             x-transition:enter-end="opacity-100 scale-100"
              x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-[60]"
-             style="display:none;">
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-90"
+             style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+                    width:320px; background:#1B4D35; border-radius:1.25rem;
+                    border:1px solid #4B5563; box-shadow:0 25px 60px rgba(0,0,0,0.6);">
 
-            {{-- Overlay --}}
-            <div class="absolute inset-0 bg-black/60" style="backdrop-filter:blur(4px);"
-                 @click="$store.confirmModal.cancel()"></div>
-
-            {{-- Tarjeta centrada --}}
-            <div class="absolute inset-0 flex items-center justify-center p-6">
-                <div x-show="$store.confirmModal.open"
-                     x-transition:enter="transition ease-out duration-200"
-                     x-transition:enter-start="opacity-0 scale-90"
-                     x-transition:enter-end="opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-150"
-                     x-transition:leave-start="opacity-100 scale-100"
-                     x-transition:leave-end="opacity-0 scale-90"
-                     style="background:#1B4D35; width:100%; max-width:340px; border-radius:1.25rem; border:1px solid #4B5563; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
-
-                    {{-- Icono --}}
-                    <div style="display:flex; flex-direction:column; align-items:center; padding:1.75rem 1.5rem 1rem;">
-                        <div style="width:3.5rem; height:3.5rem; border-radius:50%; background:rgba(239,68,68,0.15); border:2px solid rgba(239,68,68,0.4); display:flex; align-items:center; justify-content:center; margin-bottom:1rem;">
-                            <svg style="width:1.75rem; height:1.75rem; color:#f87171;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                            </svg>
-                        </div>
-                        <p style="color:white; font-weight:700; font-size:1rem; margin-bottom:0.5rem;">¿Confirmar acción?</p>
-                        <p style="color:#D1D5DB; font-size:0.875rem; text-align:center; line-height:1.4;" x-text="$store.confirmModal.message"></p>
-                    </div>
-
-                    {{-- Botones --}}
-                    <div style="display:flex; gap:0.75rem; padding:1rem 1.5rem 1.5rem;">
-                        <button @click="$store.confirmModal.cancel()"
-                                style="flex:1; padding:0.625rem 0; border-radius:0.75rem; border:1px solid #6B7280; color:#D1D5DB; font-size:0.875rem; font-weight:500; background:transparent; cursor:pointer;"
-                                onmouseover="this.style.background='rgba(107,114,128,0.3)'" onmouseout="this.style.background='transparent'">
-                            Cancelar
-                        </button>
-                        <button @click="$store.confirmModal.confirm()"
-                                style="flex:1; padding:0.625rem 0; border-radius:0.75rem; border:none; color:white; font-size:0.875rem; font-weight:700; background:#ef4444; cursor:pointer;"
-                                onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                            Confirmar
-                        </button>
-                    </div>
+            {{-- Icono y texto --}}
+            <div style="display:flex; flex-direction:column; align-items:center; padding:2rem 1.5rem 1rem; text-align:center;">
+                <div style="width:3.5rem; height:3.5rem; border-radius:50%; background:rgba(239,68,68,0.15);
+                            border:2px solid rgba(239,68,68,0.4); display:flex; align-items:center;
+                            justify-content:center; margin-bottom:1rem;">
+                    <svg style="width:1.75rem; height:1.75rem;" fill="none" viewBox="0 0 24 24"
+                         stroke="#f87171" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
                 </div>
+                <p style="color:white; font-weight:700; font-size:1rem; margin-bottom:0.5rem;">¿Confirmar acción?</p>
+                <p style="color:#D1D5DB; font-size:0.875rem; line-height:1.4;" x-text="$store.confirmModal.message"></p>
+            </div>
+
+            {{-- Botones --}}
+            <div style="display:flex; gap:0.75rem; padding:1rem 1.5rem 1.5rem;">
+                <button @click="$store.confirmModal.cancel()"
+                        style="flex:1; padding:0.6rem 0; border-radius:0.75rem; border:1px solid #6B7280;
+                               color:#D1D5DB; font-size:0.875rem; font-weight:500; background:transparent; cursor:pointer;">
+                    Cancelar
+                </button>
+                <button @click="$store.confirmModal.confirm()"
+                        style="flex:1; padding:0.6rem 0; border-radius:0.75rem; border:none;
+                               color:white; font-size:0.875rem; font-weight:700; background:#ef4444; cursor:pointer;">
+                    Confirmar
+                </button>
             </div>
         </div>
-    </template>
+    </div>
 
     {{-- ===== TOAST CONTAINER ===== --}}
     <div x-data class="fixed bottom-6 right-6 z-50 flex flex-col gap-3" style="min-width:320px; max-width:400px;">
