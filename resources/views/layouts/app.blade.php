@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,900|jetbrains-mono:400,700&display=swap" rel="stylesheet"/>
 
-    <link rel="stylesheet" href="/build/assets/app-BbjG188w.css">
+    <link rel="stylesheet" href="/build/assets/app-7oK5PE5O.css">
     <script type="module" src="/build/assets/app-DO2nEFzp.js" defer></script>
     @livewireStyles
 
@@ -296,10 +296,10 @@
                  x-transition:leave-end="opacity-0 translate-y-2 scale-95"
                  class="relative toast-bubble flex items-start gap-3 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium"
                  :class="{
-                     'toast-success bg-grs-primario border border-grs-verde/50 text-grs-verde':   toast.type === 'success',
-                     'toast-error   bg-red-950     border border-red-500/50   text-red-300':      toast.type === 'error',
-                     'toast-warning bg-yellow-950  border border-yellow-500/50 text-yellow-300':  toast.type === 'warning',
-                     'toast-info    bg-blue-950    border border-blue-500/50  text-blue-300':     toast.type === 'info',
+                     'toast-success bg-green-800 border border-green-500 text-white':    toast.type === 'success',
+                     'toast-error   bg-red-900   border border-red-500   text-white':    toast.type === 'error',
+                     'toast-warning bg-yellow-800 border border-yellow-500 text-white':  toast.type === 'warning',
+                     'toast-info    bg-blue-900  border border-blue-500   text-white':   toast.type === 'info',
                  }"
                  style="backdrop-filter:blur(12px);">
 

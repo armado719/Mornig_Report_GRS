@@ -611,6 +611,7 @@ class WizardReporte extends Component
 
         $this->mensajeGuardado = 'Guardado ' . now()->format('H:i:s');
         $this->guardando = false;
+        $this->dispatch('toast', type: 'success', message: 'Borrador guardado correctamente.');
     }
 
     // ── Helpers privados ──────────────────────────────────────────────
