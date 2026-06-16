@@ -91,3 +91,14 @@
 ::-webkit-scrollbar-track { background: #0D1F17; }
 ::-webkit-scrollbar-thumb { background: #2D4A3E; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #2D7A4F; }
+
+/* Ícono del date picker visible en fondos oscuros */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) opacity(0.6);
+    cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    filter: invert(1) opacity(1);
+}

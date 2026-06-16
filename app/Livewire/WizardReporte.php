@@ -216,11 +216,11 @@ class WizardReporte extends Component
     public function mount(?int $id = null): void
     {
         $this->rigs = Rig::where('activo', true)->pluck('numero', 'numero')->toArray();
+        $this->cargarPozos();
 
         $user = Auth::user();
         if ($user->rig) {
             $this->rig = $user->rig;
-            $this->cargarPozos();
         }
 
         $this->fecha = now()->format('Y-m-d');
