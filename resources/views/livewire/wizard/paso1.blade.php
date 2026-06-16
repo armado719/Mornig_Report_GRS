@@ -85,10 +85,14 @@
 
 {{-- ── SECCIÓN: Profundidades ── --}}
 <div class="card-grs mb-4"
-     x-data="{ ftVal: null }"
+     x-data="{
+         profAyer: $wire.entangle('prof_ayer_ft'),
+         profHoy:  $wire.entangle('prof_hoy_ft'),
+         ftVal: null
+     }"
      x-effect="
-         const a = parseFloat($wire.prof_ayer_ft);
-         const h = parseFloat($wire.prof_hoy_ft);
+         const a = parseFloat(profAyer);
+         const h = parseFloat(profHoy);
          ftVal = (!isNaN(a) && !isNaN(h)) ? (h - a) : null;
      ">
     <h3 class="seccion-titulo">
