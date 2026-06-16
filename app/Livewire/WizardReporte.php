@@ -288,7 +288,13 @@ class WizardReporte extends Component
             return;
         }
 
-        $this->guardarBorrador();
+        try {
+            $this->guardarBorrador();
+        } catch (\Exception $e) {
+            $this->addError('guardado', 'Error al guardar: ' . $e->getMessage());
+            return;
+        }
+
         $this->paso++;
     }
 
