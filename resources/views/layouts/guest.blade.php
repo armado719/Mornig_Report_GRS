@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,900|jetbrains-mono:400,700&display=swap" rel="stylesheet"/>
 
-    <link rel="stylesheet" href="/build/assets/app-Lq1AQZfx.css">
+    <link rel="stylesheet" href="/build/assets/app-C-0Z9bE1.css">
     <script type="module" src="/build/assets/app-DO2nEFzp.js" defer></script>
     @livewireStyles
 
