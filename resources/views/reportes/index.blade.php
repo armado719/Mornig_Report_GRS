@@ -2,18 +2,6 @@
 <x-app-layout>
     <x-slot name="titulo">Reportes FGPO-002</x-slot>
 
-    {{-- Flash message --}}
-    @if(session('flash.banner'))
-    <div class="mb-4 px-4 py-3 rounded-lg
-        {{ session('flash.bannerStyle') === 'success' ? 'bg-grs-verde/20 border border-grs-verde/40 text-grs-verde' : 'bg-red-500/20 border border-red-500/40 text-red-400' }}
-        text-sm flex items-center gap-2">
-        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        {{ session('flash.banner') }}
-    </div>
-    @endif
-
     <div class="card-grs">
         {{-- Cabecera con filtros --}}
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
