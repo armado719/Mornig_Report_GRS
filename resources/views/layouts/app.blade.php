@@ -9,23 +9,19 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,900|jetbrains-mono:400,700&display=swap" rel="stylesheet"/>
 
-    <link rel="stylesheet" href="/build/assets/app-7oK5PE5O.css">
+    <link rel="stylesheet" href="/build/assets/app-DQd8rAbh.css">
     <script type="module" src="/build/assets/app-DO2nEFzp.js" defer></script>
     @livewireStyles
 
     <style>
-        .toast-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -7px;
-            left: 20px;
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
+        .toast-card {
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.15);
         }
-        .toast-success::after { border-top: 7px solid rgba(45,122,79,0.9); }
-        .toast-error::after   { border-top: 7px solid rgba(185,28,28,0.9); }
-        .toast-warning::after { border-top: 7px solid rgba(180,83,9,0.9); }
-        .toast-info::after    { border-top: 7px solid rgba(30,64,175,0.9); }
+        .toast-card-success { background: #22c55e; }
+        .toast-card-error   { background: #ef4444; }
+        .toast-card-warning { background: #f59e0b; }
+        .toast-card-info    { background: #3b82f6; }
     </style>
 
     <script>
@@ -285,43 +281,53 @@
     @livewireScripts
 
     {{-- ===== TOAST CONTAINER ===== --}}
-    <div x-data class="fixed bottom-6 right-6 z-50 flex flex-col gap-2" style="min-width:300px; max-width:380px;">
+    <div x-data class="fixed bottom-6 right-6 z-50 flex flex-col gap-3" style="min-width:320px; max-width:400px;">
         <template x-for="toast in $store.toasts.items" :key="toast.id">
             <div x-show="toast.show"
                  x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                 x-transition:enter-start="opacity-0 translate-y-6 scale-90"
                  x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                 x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                 class="relative toast-bubble flex items-start gap-3 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium"
+                 x-transition:leave-end="opacity-0 translate-y-4 scale-90"
+                 class="toast-card flex items-start gap-3 px-5 py-4 text-white"
                  :class="{
-                     'toast-success bg-green-800 border border-green-500 text-white':    toast.type === 'success',
-                     'toast-error   bg-red-900   border border-red-500   text-white':    toast.type === 'error',
-                     'toast-warning bg-yellow-800 border border-yellow-500 text-white':  toast.type === 'warning',
-                     'toast-info    bg-blue-900  border border-blue-500   text-white':   toast.type === 'info',
-                 }"
-                 style="backdrop-filter:blur(12px);">
+                     'toast-card-success': toast.type === 'success',
+                     'toast-card-error':   toast.type === 'error',
+                     'toast-card-warning': toast.type === 'warning',
+                     'toast-card-info':    toast.type === 'info',
+                 }">
 
-                {{-- Icono --}}
-                <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        x-bind:d="
-                            toast.type === 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' :
-                            toast.type === 'error'   ? 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' :
-                            toast.type === 'warning' ? 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' :
-                            'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                        "/>
-                </svg>
+                {{-- Icono circular --}}
+                <div class="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center"
+                     style="background:rgba(255,255,255,0.25);">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            x-bind:d="
+                                toast.type === 'success' ? 'M5 13l4 4L19 7' :
+                                toast.type === 'error'   ? 'M6 18L18 6M6 6l12 12' :
+                                toast.type === 'warning' ? 'M12 9v4m0 4h.01' :
+                                'M13 16h-1v-4h-1m1-4h.01'
+                            "/>
+                    </svg>
+                </div>
 
-                {{-- Mensaje --}}
-                <span class="flex-1 leading-relaxed" x-text="toast.message"></span>
+                {{-- Contenido --}}
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold text-sm leading-tight mb-0.5"
+                       x-text="toast.type === 'success' ? 'Éxito' : toast.type === 'error' ? 'Error' : toast.type === 'warning' ? 'Atención' : 'Información'">
+                    </p>
+                    <p class="text-sm leading-snug" style="opacity:0.92;" x-text="toast.message"></p>
+                </div>
 
                 {{-- Cerrar --}}
                 <button @click="$store.toasts.remove(toast.id)"
-                        class="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                        style="background:rgba(255,255,255,0.2);"
+                        onmouseover="this.style.background='rgba(255,255,255,0.35)'"
+                        onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
