@@ -228,17 +228,16 @@
         <div class="space-y-2">
             @php
             $camposDiesel = [
-                ['key' => 'd_ayer',      'label' => 'Inventario Ayer',  'color' => 'text-white',      'readonly' => false],
-                ['key' => 'd_recibido',  'label' => 'Recibido Hoy',     'color' => 'text-grs-verde',  'readonly' => false],
-                ['key' => 'd_hoy',       'label' => 'Inventario Hoy',   'color' => 'text-white',      'readonly' => false],
-                ['key' => 'd_usado',     'label' => 'Usado (auto)',      'color' => 'text-yellow-400', 'readonly' => true],
-                ['key' => 'd_acumulado', 'label' => 'Acumulado',        'color' => 'text-grs-verde',  'readonly' => false],
+                ['key' => 'd_ayer',      'label' => 'Inventario Ayer',  'readonly' => false],
+                ['key' => 'd_recibido',  'label' => 'Recibido Hoy',     'readonly' => false],
+                ['key' => 'd_hoy',       'label' => 'Inventario Hoy',   'readonly' => false],
+                ['key' => 'd_usado',     'label' => 'Usado (auto)',      'readonly' => true],
+                ['key' => 'd_acumulado', 'label' => 'Acumulado',        'readonly' => false],
             ];
             @endphp
 
             @foreach($camposDiesel as $c)
-            <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg
-                        {{ $c['readonly'] ? 'bg-grs-fondo/60 border border-grs-borde/50' : 'bg-grs-fondo/30' }}">
+            <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-grs-borde/50">
                 <label class="text-xs font-medium text-grs-texto flex-shrink-0 w-36">
                     {{ $c['label'] }}
                     @if($c['readonly'])
@@ -251,8 +250,7 @@
                         step="0.01" min="0" placeholder="0.00"
                         inputmode="decimal"
                         {{ $c['readonly'] ? 'readonly' : '' }}
-                        class="input-grs font-mono text-right text-sm {{ $c['color'] }} w-32
-                               {{ $c['readonly'] ? 'opacity-70 cursor-not-allowed' : '' }}"/>
+                        class="input-grs font-mono text-right text-sm w-32"/>
                     <span class="text-xs text-gray-600 w-6">gal</span>
                 </div>
             </div>

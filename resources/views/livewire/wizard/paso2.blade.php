@@ -185,7 +185,7 @@
                     </div>
                     <div>
                         <label class="label-grs">Horas</label>
-                        <div class="input-grs text-center font-mono font-bold text-grs-verde select-none">
+                        <div class="input-grs text-center font-mono font-bold text-green-700 select-none">
                             {{ isset($op['horas']) && $op['horas'] !== '' ? number_format((float)$op['horas'], 2) : '—' }}
                         </div>
                     </div>

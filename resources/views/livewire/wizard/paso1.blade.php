@@ -267,7 +267,7 @@
                     <label class="label-grs mb-0">Días sin LTI</label>
                     <input type="number" wire:model="p_dias_sin_lti"
                         min="0" inputmode="numeric"
-                        class="input-grs w-24 font-mono font-bold text-center text-green-400"/>
+                        class="input-grs w-24 font-mono font-bold text-center text-green-700"/>
                 </div>
             </div>
 
@@ -283,7 +283,7 @@
                     <label class="label-grs mb-0">Días sin RWC</label>
                     <input type="number" wire:model="p_dias_sin_rwc"
                         min="0" inputmode="numeric"
-                        class="input-grs w-24 font-mono font-bold text-center text-blue-400"/>
+                        class="input-grs w-24 font-mono font-bold text-center text-blue-700"/>
                 </div>
             </div>
 
