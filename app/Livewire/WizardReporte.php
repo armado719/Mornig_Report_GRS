@@ -281,10 +281,18 @@ class WizardReporte extends Component
     public function siguientePaso(): void
     {
         $this->resetErrorBag();
-        $this->validarPasoActual(); // puede lanzar ValidationException (paso 1)
 
-        // Para validaciones manuales que usan addError() (paso 2+)
+        try {
+            $this->validarPasoActual();
+        } catch (\Illuminate\Validation\ValidationException) {
+            $this->dispatch('toast', type: 'error', message: 'Completa los campos requeridos antes de continuar.');
+            $this->js("window.scrollTo({top:0,behavior:'smooth'})");
+            return;
+        }
+
         if ($this->getErrorBag()->isNotEmpty()) {
+            $this->dispatch('toast', type: 'error', message: 'Completa los campos requeridos antes de continuar.');
+            $this->js("window.scrollTo({top:0,behavior:'smooth'})");
             return;
         }
 
@@ -292,6 +300,8 @@ class WizardReporte extends Component
             $this->guardarBorrador();
         } catch (\Exception $e) {
             $this->addError('guardado', 'Error al guardar: ' . $e->getMessage());
+            $this->dispatch('toast', type: 'error', message: 'Error al guardar: ' . $e->getMessage());
+            $this->js("window.scrollTo({top:0,behavior:'smooth'})");
             return;
         }
 
