@@ -59,7 +59,7 @@
         </div>
 
         @if($reporte->personal)
-        <div class="mt-4 pt-4 border-t border-grs-borde grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="mt-4 pt-4 border-t border-gray-600 grid grid-cols-2 sm:grid-cols-4 gap-3">
             @foreach([['Rig Manager', $reporte->personal->rig_manager], ['DSM', $reporte->personal->dsm], ['Supervisor', $reporte->personal->supervisor], ['HSEQ', $reporte->personal->hseq]] as [$titulo, $valor])
             <div>
                 <div class="tabla-header">{{ $titulo }}</div>
@@ -91,15 +91,15 @@
                 ['Ft. Perforados', $reporte->ft_perforados, 'ft'],
                 ['Horas Rotación', $reporte->hrs_rotacion, 'h'],
             ] as [$lbl, $val, $unit])
-            <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-grs-borde">
-                <div class="text-[10px] text-gray-600 mb-1">{{ $lbl }}</div>
+            <div class="text-center p-3 rounded-lg bg-grs-fondo/40 border border-gray-600">
+                <div class="text-[10px] text-gray-400 mb-1">{{ $lbl }}</div>
                 <div class="font-mono font-bold text-grs-verde text-sm">{{ $val ? number_format($val, 0) : '—' }}</div>
-                <div class="text-[10px] text-gray-600">{{ $unit }}</div>
+                <div class="text-[10px] text-gray-400">{{ $unit }}</div>
             </div>
             @endforeach
         </div>
         @if($reporte->operacion_actual)
-        <div class="mt-3 px-3 py-2 rounded-lg bg-grs-fondo/40 border border-grs-borde">
+        <div class="mt-3 px-3 py-2 rounded-lg bg-grs-fondo/40 border border-gray-600">
             <span class="tabla-header">Operación actual:</span>
             <span class="text-white text-sm ml-2">{{ $reporte->operacion_actual }}</span>
         </div>
@@ -156,8 +156,8 @@
                 ['Geles', $reporte->lodo->geles, ''],
                 ['Sólidos', $reporte->lodo->solidos, '%'],
             ] as [$lbl, $val, $unit])
-            <div class="p-2 rounded bg-grs-fondo/40 border border-grs-borde">
-                <div class="text-[9px] text-gray-600 mb-0.5">{{ $lbl }}</div>
+            <div class="p-2 rounded bg-grs-fondo/40 border border-gray-600">
+                <div class="text-[9px] text-gray-400 mb-0.5">{{ $lbl }}</div>
                 <div class="font-mono text-grs-verde text-xs font-bold">{{ $val ?? '—' }}{{ $val && $unit ? ' '.$unit : '' }}</div>
             </div>
             @endforeach
@@ -177,10 +177,10 @@
                 ['Usado', $reporte->diesel->usado],
                 ['Acumulado', $reporte->diesel->acumulado],
             ] as [$lbl, $val])
-            <div class="text-center p-2 rounded-lg bg-grs-fondo/40 border border-grs-borde">
-                <div class="text-[10px] text-gray-600 mb-1">{{ $lbl }}</div>
+            <div class="text-center p-2 rounded-lg bg-grs-fondo/40 border border-gray-600">
+                <div class="text-[10px] text-gray-400 mb-1">{{ $lbl }}</div>
                 <div class="font-mono font-bold text-grs-verde text-sm">{{ $val ? number_format($val, 0) : '—' }}</div>
-                <div class="text-[10px] text-gray-600">gal</div>
+                <div class="text-[10px] text-gray-400">gal</div>
             </div>
             @endforeach
         </div>
@@ -220,7 +220,7 @@
                     ['Horas Motor', $reporte->topDrive->hrs_motor, 'h'],
                     ['Acum. Rotación', $reporte->topDrive->acum_rotacion, 'h'],
                 ] as [$lbl, $val, $unit])
-                <div class="flex justify-between px-3 py-2 rounded-lg bg-grs-fondo/40 border border-grs-borde">
+                <div class="flex justify-between px-3 py-2 rounded-lg bg-grs-fondo/40 border border-gray-600">
                     <span class="text-sm text-grs-texto">{{ $lbl }}</span>
                     <span class="font-mono font-bold text-grs-verde text-sm">{{ $val ? $val.' '.$unit : '—' }}</span>
                 </div>
@@ -295,7 +295,7 @@
             @if($comentariosMap->has($tipo) && $comentariosMap[$tipo]->contenido)
             <div>
                 <div class="label-grs">{{ $titulo }}</div>
-                <div class="text-grs-texto text-sm whitespace-pre-line px-3 py-2 rounded-lg bg-grs-fondo/40 border border-grs-borde">
+                <div class="text-grs-texto text-sm whitespace-pre-line px-3 py-2 rounded-lg bg-grs-fondo/40 border border-gray-600">
                     {{ $comentariosMap[$tipo]->contenido }}
                 </div>
             </div>

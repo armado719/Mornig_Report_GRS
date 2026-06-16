@@ -25,7 +25,7 @@
             <form method="POST" action="{{ route('admin.rigs.store') }}" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="label-grs">Número de RIG * <span class="text-[9px] text-gray-600">(único)</span></label>
+                    <label class="label-grs">Número de RIG * <span class="text-[9px] text-gray-400">(único)</span></label>
                     <input type="text" name="numero" value="{{ old('numero') }}"
                         placeholder="Ej: 158"
                         class="input-grs font-mono @error('numero') border-red-500 @enderror"/>

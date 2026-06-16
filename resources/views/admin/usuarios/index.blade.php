@@ -52,7 +52,7 @@
                         <td class="py-2.5 pr-3 text-center">
                             @foreach($u->roles as $rol)
                             <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold
-                                {{ $rol->name === 'ADMIN' ? 'bg-purple-900/50 text-purple-300 border border-purple-700/50' : 'bg-grs-primario text-grs-verde border border-grs-borde' }}">
+                                {{ $rol->name === 'ADMIN' ? 'bg-purple-900/50 text-purple-300 border border-purple-700/50' : 'bg-grs-primario text-grs-verde border border-gray-600' }}">
                                 {{ $rol->name }}
                             </span>
                             @endforeach

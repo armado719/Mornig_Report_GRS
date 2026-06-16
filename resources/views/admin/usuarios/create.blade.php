@@ -44,7 +44,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="label-grs">Contraseña * <span class="text-[9px] text-gray-600">(mín. 8 caracteres)</span></label>
+                        <label class="label-grs">Contraseña * <span class="text-[9px] text-gray-400">(mín. 8 caracteres)</span></label>
                         <input type="password" name="password"
                             placeholder="Contraseña segura"
                             class="input-grs @error('password') border-red-500 @enderror"/>
@@ -62,7 +62,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="label-grs">RIG asignado <span class="text-[9px] text-gray-600">(opcional — para RIG_MANAGER)</span></label>
+                        <label class="label-grs">RIG asignado <span class="text-[9px] text-gray-400">(opcional — para RIG_MANAGER)</span></label>
                         <select name="rig" class="input-grs">
                             <option value="">— Sin RIG asignado —</option>
                             @foreach($rigs as $num)

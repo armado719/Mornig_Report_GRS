@@ -25,7 +25,7 @@
             <form method="POST" action="{{ route('admin.pozos.store') }}" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="label-grs">Nombre del Pozo * <span class="text-[9px] text-gray-600">(único)</span></label>
+                    <label class="label-grs">Nombre del Pozo * <span class="text-[9px] text-gray-400">(único)</span></label>
                     <input type="text" name="nombre" value="{{ old('nombre') }}"
                         placeholder="Ej: CASABE 1643"
                         class="input-grs @error('nombre') border-red-500 @enderror"/>

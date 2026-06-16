@@ -41,22 +41,22 @@
         <div class="card-grs">
             <p class="text-xs font-semibold uppercase tracking-wider text-grs-texto mb-2">Reportes Hoy</p>
             <p class="text-3xl font-bold text-grs-verde font-mono">{{ $reportesHoy }}</p>
-            <p class="text-xs text-gray-600 mt-1">{{ now()->format('d/m/Y') }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ now()->format('d/m/Y') }}</p>
         </div>
         <div class="card-grs">
             <p class="text-xs font-semibold uppercase tracking-wider text-grs-texto mb-2">Completados — Mes</p>
             <p class="text-3xl font-bold text-white font-mono">{{ $completadosMes }}</p>
-            <p class="text-xs text-gray-600 mt-1">{{ now()->locale('es')->isoFormat('MMMM YYYY') }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ now()->locale('es')->isoFormat('MMMM YYYY') }}</p>
         </div>
         <div class="card-grs">
             <p class="text-xs font-semibold uppercase tracking-wider text-grs-texto mb-2">Borradores</p>
             <p class="text-3xl font-bold {{ $borradores > 0 ? 'text-yellow-400' : 'text-white' }} font-mono">{{ $borradores }}</p>
-            <p class="text-xs text-gray-600 mt-1">pendientes de completar</p>
+            <p class="text-xs text-gray-400 mt-1">pendientes de completar</p>
         </div>
         <div class="card-grs">
             <p class="text-xs font-semibold uppercase tracking-wider text-grs-texto mb-2">Total Reportes</p>
             <p class="text-3xl font-bold text-white font-mono">{{ $totalReportes }}</p>
-            <p class="text-xs text-gray-600 mt-1">en el sistema</p>
+            <p class="text-xs text-gray-400 mt-1">en el sistema</p>
         </div>
     </div>
 

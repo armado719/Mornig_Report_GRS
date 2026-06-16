@@ -98,7 +98,7 @@
     </div>
 
     {{-- ── Navegación inferior ── --}}
-    <div class="flex items-center justify-between mt-6 pt-4 border-t border-grs-borde">
+    <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-600">
 
         {{-- Botón Anterior --}}
         <div>

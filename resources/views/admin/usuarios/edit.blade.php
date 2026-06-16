@@ -43,7 +43,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="label-grs">Nueva contraseña <span class="text-[9px] text-gray-600">(dejar vacío para no cambiar)</span></label>
+                        <label class="label-grs">Nueva contraseña <span class="text-[9px] text-gray-400">(dejar vacío para no cambiar)</span></label>
                         <input type="password" name="password" placeholder="••••••••"
                             class="input-grs @error('password') border-red-500 @enderror"/>
                     </div>

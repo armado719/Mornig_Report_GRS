@@ -128,7 +128,7 @@
         {{-- Cards mobile --}}
         <div class="sm:hidden space-y-3">
             @forelse($reportes as $r)
-            <div class="p-3 rounded-lg bg-grs-fondo/40 border border-grs-borde">
+            <div class="p-3 rounded-lg bg-grs-fondo/40 border border-gray-600">
                 <div class="flex items-start justify-between mb-2">
                     <div>
                         <div class="font-semibold text-white text-sm">RIG {{ $r->rig }} — {{ $r->pozo }}</div>

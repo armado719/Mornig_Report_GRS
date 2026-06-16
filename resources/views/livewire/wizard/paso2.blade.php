@@ -63,7 +63,7 @@
 
     {{-- Cabecera — desktop --}}
     <div class="hidden lg:grid grid-cols-[3rem_6rem_6rem_5rem_11rem_1fr_7rem_4rem_4rem_3rem]
-                gap-1 px-3 py-2 bg-grs-fondo border-b border-grs-borde">
+                gap-1 px-3 py-2 bg-grs-fondo border-b border-gray-600">
         <span class="tabla-header text-center">#</span>
         <span class="tabla-header">Desde</span>
         <span class="tabla-header">Hasta</span>

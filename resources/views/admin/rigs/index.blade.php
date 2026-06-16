@@ -27,9 +27,9 @@
 
         <div class="space-y-2">
             @forelse($rigs as $rig)
-            <div class="flex items-center justify-between px-4 py-3 rounded-lg bg-grs-fondo/40 border border-grs-borde group hover:border-grs-acento transition-colors">
+            <div class="flex items-center justify-between px-4 py-3 rounded-lg bg-grs-fondo/40 border border-gray-600 group hover:border-grs-acento transition-colors">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-grs-primario border border-grs-borde flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-lg bg-grs-primario border border-gray-600 flex items-center justify-center">
                         <span class="font-mono font-bold text-grs-verde text-sm">{{ $rig->numero }}</span>
                     </div>
                     <div>
