@@ -18,7 +18,7 @@
 
                 {{-- Línea conectora --}}
                 @if($num > 1)
-                    <div class="flex-1 h-px mx-2 {{ $paso >= $num ? 'bg-grs-verde' : 'bg-grs-borde' }} transition-colors duration-300"></div>
+                    <div class="flex-1 h-px mx-2 {{ $paso >= $num ? 'bg-grs-verde' : 'bg-gray-500' }} transition-colors duration-300"></div>
                 @endif
 
                 {{-- Paso --}}
@@ -54,7 +54,7 @@
         </div>
 
         {{-- Barra de progreso lineal --}}
-        <div class="mt-4 h-1 bg-grs-borde rounded-full overflow-hidden">
+        <div class="mt-4 h-1 bg-gray-500 rounded-full overflow-hidden">
             <div class="h-full bg-grs-verde rounded-full transition-all duration-500"
                  style="width: {{ (($paso - 1) / ($totalPasos - 1)) * 100 }}%"></div>
         </div>
