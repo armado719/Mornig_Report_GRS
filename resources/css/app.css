@@ -39,10 +39,17 @@
 
     /* Input GRS */
     .input-grs {
-        @apply w-full bg-grs-fondo border border-grs-borde rounded-lg px-3 py-2
-               text-white placeholder-gray-500 text-sm
-               focus:outline-none focus:ring-2 focus:ring-grs-acento focus:border-grs-acento
+        @apply w-full rounded-lg px-3 py-2 text-white placeholder-gray-400 text-sm
+               border border-grs-acento/50
+               focus:outline-none focus:ring-2 focus:ring-grs-verde/40 focus:border-grs-verde/70
+               hover:border-grs-acento
                transition-colors duration-150;
+        background-color: #091a0f;
+    }
+    .input-grs:disabled,
+    .input-grs[readonly] {
+        @apply opacity-60 cursor-not-allowed;
+        background-color: #071209;
     }
 
     /* Label GRS */
